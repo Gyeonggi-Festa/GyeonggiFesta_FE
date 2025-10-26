@@ -1,0 +1,231 @@
+.container {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.backIcon {
+    width: 6px;
+    height: 12px;
+}
+
+.imageSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.imagePlaceholder {
+    width: 100px;
+    height: 138px;
+    background-color: #d9d9d9;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #929292;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+}
+
+.gu {
+    font-weight: 500;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    margin-top: 8px;
+}
+
+.dateBox {
+    
+    margin-top: 32px;
+}
+
+.label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.inputRow {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 16px;
+}
+
+.dateInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+}
+
+.arrow {
+    width: 6px;
+    height: 12px;
+}
+
+.reviewBox {
+    margin-top: 32px;
+    position: relative;
+}
+
+.textarea {
+    width: 100%;
+    height: 217px; /* ✅ 높이 수정 */
+    padding: 16px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: none;
+    
+}
+
+.charCount {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    text-align: right;  /* ✅ 바깥 오른쪽 아래 정렬을 위해 수정 */
+}
+
+.photoUpload {
+    margin-top: 24px;
+}
+
+.uploadBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;               /* ✅ 100% 너비 */
+    height: 48px;              /* 높이 설정 */
+    gap: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;          /* ✅ 흰 배경 */
+    font-size: 16px;
+    font-weight: 600;
+    color: #1A1A1A;
+    cursor: pointer;
+}
+
+.optional {
+    font-size: 12px;
+    font-weight: 500;
+    color: #9E9E9E;
+}
+.submitBtn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    background-color: #e0e0e0;
+    color: #fff;
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+}
+
+.submitBtn.active {
+    background-color: #000;
+    cursor: pointer;
+}
+.imageInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    background: #f5f5f5;
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+  
+  .imageName {
+    font-size: 14px;
+    color: #333;
+    flex: 1;
+    word-break: break-word;
+  }
+  
+  .checkIcon {
+    width: 16px;
+    height: 16px;
+  }
+  /* ReviewWritePage.module.css */
+
+.imagePlaceholder {
+  width: 160px;
+  height: 200px;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.thumbnailImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noImage {
+  color: #888;
+  font-size: 14px;
+}
+/* ReviewWritePage.module.css */
+
+.ratingBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가운데 정렬 */
+  margin-top: 16px;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.stars {
+  display: flex;
+  gap: 8px; /* 별 사이 간격 */
+}
+
+.starIcon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.starIcon:hover {
+  transform: scale(1.1);
+}
+

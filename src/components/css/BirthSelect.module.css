@@ -1,0 +1,42 @@
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .selectGroup {
+    display: flex;
+    flex-direction: column;
+    width: 28%;
+  }
+  
+  .label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4D4D4D;
+    margin-bottom: 4px;
+  }
+  
+  .select {
+    border: none;
+    border-bottom: 2px solid #B3B3B3;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 0;
+    background-color: transparent;
+  
+    /* 화살표 커스터마이징 */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('/assets/arrow-down.svg');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+  }
+  .select:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+  border-bottom: 2px solid #ddd;
+}
