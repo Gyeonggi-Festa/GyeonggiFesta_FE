@@ -1,0 +1,83 @@
+.overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  
+  .modal {
+    background: white;
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-height: 506px;
+    padding: 24px 20px 20px; /* ✅ 상단 패딩만 24px */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  :global(.react-calendar) {
+    border: none;
+    width: auto;
+    font-family: inherit;
+    margin-bottom: 50px;
+  }
+  
+  :global(.react-calendar__navigation) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 18px;       /* ✅ 글자 크기 키우기 */
+    font-weight: 700;      /* ✅ 글자 굵기 강조 */
+    color: #000000;        /* ✅ 검정색 강조 */
+  }
+  
+  :global(.react-calendar__navigation button) {
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  :global(.react-calendar__navigation button:disabled) {
+    color: #ccc;
+    cursor: default;
+  }
+  
+  :global(.react-calendar__navigation__label) {
+    flex-grow: 1;
+    text-align: center;
+  }
+  
+  
+  :global(.react-calendar__tile) {
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  
+  
+  .closeBtn {
+    width: 100%;
+    background: #000;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 16px;
+    cursor: pointer;
+  }
+  

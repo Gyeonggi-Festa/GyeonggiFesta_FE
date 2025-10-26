@@ -1,0 +1,65 @@
+/* pages/css/RegisterPage.module.css */
+.container {
+  padding: 90px 24px;
+  max-width: 400px;
+  margin: 0 auto;
+  
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 160%;
+  margin-bottom: 24px;
+}
+
+.submitButton {
+  margin-top: 24px;
+  width: 100%;
+  padding: 12px 0;
+  background-color: #4a4a4a;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 8px;
+  opacity: 0.5;
+  cursor: default;
+  transition: all 0.3s ease;
+}
+
+.submitButton:enabled {
+  opacity: 1;
+  cursor: pointer;
+  background: #3977F4; /* ✅ 그라데이션 배경 */
+  color: #fff;
+}
+
+.emailSection {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+  margin-left: auto;
+}
+.emailSection > :first-child {
+  flex: 1;
+}
+.emailCheckButton {
+  font-size: 12px;
+  padding: 6px 10px;
+  background-color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.emailCheckMessage {
+  font-size: 12px;
+  color: #4a4a4a;
+  margin-bottom: 12px;
+}
+.emailCheckButton.valid {
+  background: #3977F4; /* ✨ 예쁜 그라디언트 적용 */
+  color: white;
+  font-weight: bold;
+}

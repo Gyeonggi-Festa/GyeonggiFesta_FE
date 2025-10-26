@@ -1,0 +1,42 @@
+.wrapper {
+  display: flex;
+  justify-content: space-between; /* ➡️ 버튼 간 여백 없이 양 끝 정렬 */
+  margin-top: 30px;
+
+}
+
+.button {
+  background-color: #eeeeee;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  flex: 1; /* 동일한 너비 */
+  text-align: center;
+  margin-right: 8px; /* 버튼 간격 */
+  border:none;
+  color: #797979;
+}
+
+.button:last-child {
+  margin-right: 0;
+}
+
+.selected {
+  background:  #3977F4;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  flex: 1;
+  border:none;
+  text-align: center;
+}
+.disabled {
+  background-color: #f0f0f0 !important;
+  color: #b3b3b3 !important;
+  cursor: not-allowed;
+  pointer-events: none;
+  border: 1px solid #ddd;
+}
