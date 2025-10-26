@@ -5,17 +5,17 @@
   padding: 60px 20px;
   font-family: 'Pretendard', sans-serif;
 }
+
 .mainImage{
   z-index: 1000;
+  width: 258px; /* 기본 크기 */
+  height: 350px; /* 기본 크기 */
 }
-
 
 .titleContainer {
   text-align: center;
   margin-bottom: 12px;
 }
-
-
 
 .mainTitle {
   font-size: 24px;
@@ -23,7 +23,6 @@
   line-height: 160%;
   color: #000000;
   margin: 0;
-  
   z-index: 1000;
 }
 
