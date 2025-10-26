@@ -26,3 +26,4 @@ dist-ssr
 
 # ⚠️ Do NOT ignore package-lock.json
 # (삭제됨) package-lock.json 또는 PACKLOCK.JSON
+.vercel
