@@ -1,0 +1,78 @@
+.container {
+  background-color: white;
+  min-height: 100vh; /* ✅ 전체 높이 차지 */
+  padding: 24px;
+  font-family: 'Pretendard', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+.item img {
+  width: 6px;
+  height: 12px;
+  margin-right: 8px; /* ✅ 오른쪽 여백 대신 왼쪽 여백 추가 */
+}
+
+  
+  .welcome {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    line-height: 1.4;
+    text-align: center;
+    margin-top: 50px;
+
+  }
+  
+  .editBtn {
+    font-size: 11px;
+    font-weight: 700;
+    color: #808080;
+    background: none;
+    border: none;
+    margin-bottom: 24px;
+    cursor: pointer;
+    margin: 30px 0;
+  }
+  
+  .section {
+    margin-bottom: 32px;
+  }
+  
+  .sectionTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #808080;
+    margin-bottom: 12px;
+  }
+  
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e6e6e6; /* Grayscale/Lightest */
+  }
+  
+  .item span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #373737;
+  }
+  
+  .item img {
+    width: 6px;
+    height: 12px;
+  }
+  
+  .logout {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #aaa;
+    background: none;
+    border: none;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+  }
+  

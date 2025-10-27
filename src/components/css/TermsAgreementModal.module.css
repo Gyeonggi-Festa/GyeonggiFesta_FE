@@ -1,0 +1,226 @@
+.Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.55); /* Gray overlay */
+    display: flex;
+    align-items: flex-end; /* Align the modal at the bottom */
+}
+
+.Modal {
+    position: absolute;
+    bottom: 0;
+    left: 0px;
+    right: 0;
+    height: 350px; /* Occupy the bottom half of the screen */
+    background-color: white;
+    padding: 32px 20px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.agreement_title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.agreement_sub {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #b3b3b3; /* Lighter grayscale color */
+    margin-bottom: 30px;
+}
+
+.agreement-section {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.agreement_desc {
+    margin-top: 22px;
+    padding-left: 0px;
+}
+
+.agreement_desc li {
+    list-style: none; /* Remove default list style */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.agreement_desc li input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    background: url('/assets/unchecked.svg') no-repeat center center;
+    border-bottom: none;
+    background-size: contain;
+}
+
+.agreement_desc li input[type="checkbox"]:checked {
+    background: url('/assets/checked.svg') no-repeat center center;
+    background-size: contain;
+    border: none;
+}
+
+.agreement_right {
+    margin-left: auto;
+    margin-right: 45px;
+}
+
+.agree-button {
+    background-color: #3977F4;
+    color: #ffffff;
+    width: 95%;
+    height: 54px;
+    border-radius: 32px;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 25px 0px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.agree-button.disabled {
+    background-color: black; /* 비활성화 상태 배경 */
+    background-image: none;
+    color: white; /* 글씨 흰색 */
+    cursor: not-allowed; /* 마우스 커서 변경 */
+}
+
+.terms-link {
+    position: absolute;
+    right: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.agree-button:hover {
+    background-color: #3700b3;
+}
+
+.agreement_desc li label {
+    position: relative;
+}
+
+.agreement_desc li label::after {
+    font-size: 12px;
+    font-weight: bold;
+    content: ' 필수';
+    color: lightgray; /* Set the color to light gray */
+}
+
+.agreement_desc li:nth-child(4) label::after {
+    content: ' 선택';
+    color: lightgray; /* Set the color to light gray */
+}
+
+.Overlay_TERM {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명한 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 모달 컨텐츠 스타일 */
+.agreement-box_TERM {
+    background-color: white;
+    width: 70vw; /* 화면 가로의 70% */
+    height: 80vh; /* 화면 세로의 80% */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
+}
+
+/* 모달 안의 텍스트 스타일 */
+.agreement-box_TERM p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* 닫기 버튼 스타일 */
+.cancel-button_TERM {
+    width: 30px;
+    margin-left: auto;
+    margin-right: 20px;
+    background-color: white; /* 배경을 흰색으로 설정 */
+    color: #333; /* 글자 색상을 회색으로 설정 */
+    font-weight: bold; /* 글자를 굵게 설정 */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+    text-align: center; /* 텍스트를 가운데 정렬 */
+}
+.policyContent {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #333;
+}
+
+.policyContent h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.policyContent h3 {
+  font-size: 16px;
+  margin-top: 16px;
+  color: #1a73e8;
+}
+
+.policyContent ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.noticeBox {
+  background-color: #fff8e1;
+  padding: 12px;
+  border-left: 4px solid #ffb300;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.contactInfo {
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+.contactInfo a {
+  color: #1a73e8;
+  text-decoration: underline;
+}

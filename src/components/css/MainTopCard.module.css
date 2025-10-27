@@ -1,0 +1,85 @@
+/* 슬라이더 마진 조절 */
+.slider {
+  margin-bottom: 0px;
+}
+.container{
+  margin-bottom: 20px;
+}
+/* slick-slide 내부 flex로 카드 정렬 */
+.slick-slide > div {
+  display: flex;
+  justify-content: center;
+}
+
+/* 카드 전체를 이미지로 채움 */
+.cardWrapper {
+  width: 100%;
+  max-width: 500px;
+  height: 450px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0 auto;
+  background-size: cover;
+  background-position: center;
+}
+
+/* 카드 위 오버레이 (텍스트 배경) */
+.cardOverlay {
+  width: 100%;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: white;
+  text-align: left;
+}
+
+/* 텍스트 한 줄 + 말줄임 */
+.mainText,
+.subText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: white;
+}
+
+.mainText {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.subText {
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 4px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+/* dots 위치 제어 */
+:global(.slick-dots) {
+  margin-top: 0px;
+  margin-bottom: 12px;
+}
+
+:global(.slick-dots li button:before) {
+  font-size: 10px;
+  color: #FFFFFF;
+  opacity: 1;
+}
+
+:global(.slick-dots li.slick-active button:before) {
+  color: #FFFFFF;
+  opacity: 1;
+}
+
+/* 버튼은 카드 아래 고정 */
+
+
+
