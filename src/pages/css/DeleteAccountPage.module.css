@@ -1,67 +1,100 @@
 .container {
-    padding: 20px;
-    padding-top: 100px;
-  }
-  .margins{
-    margin-top: 60px;
-  }
-  .sorry {
-    margin-top: 50px;
-    color: #373737;
-    font-weight: 600;
-    font-size: 16px;
-    text-align: center;
-    margin: 20px 0;
-    line-height: 1.5;
-  }
-  
-  .request {
-    color: #373737;
-    font-weight: 600;
-    font-size: 16px;
-    text-align: center;
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-  
-  .noticeTitle {
-    color: #373737;
-    font-weight: 600;
-    font-size: 16px;
-    text-align: left;
-    margin-bottom: 12px;
-  }
-  
-  .noticeList {
-    color: #7C7C7C;
-    font-weight: 500;
-    font-size: 14px;
-    list-style-type: disc;
-    padding-left: 20px;
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-  
-  .reasonInput {
-    width: 100%;
-    height: 100px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 14px;
-    resize: none;
-    margin-bottom: 20px;
-  }
-  
-  .deleteButton {
-    background-color: #1A1A1A;
-    color: white;
-    font-size: 18px;
-    font-weight: 600;
-    padding: 12px 0;
-    width: 100%;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.content {
+  padding: 80px 20px 40px;
+}
+
+.sorry {
+  color: #373737;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  margin: 40px 0 20px;
+  line-height: 1.6;
+}
+
+.request {
+  color: #373737;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.noticeSection {
+  margin-bottom: 24px;
+}
+
+.noticeTitle {
+  color: #373737;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.noticeList {
+  color: #7C7C7C;
+  font-weight: 500;
+  font-size: 14px;
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.noticeList li {
+  margin-bottom: 8px;
+}
+
+.reasonInput {
+  width: 100%;
+  height: 120px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.reasonInput:focus {
+  outline: none;
+  border-color: #1A1A1A;
+}
+
+.reasonInput::placeholder {
+  color: #ADADAD;
+}
+
+.deleteButton {
+  background-color: #1A1A1A;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 0;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #2A2A2A;
+}
+
+.deleteButton:active {
+  background-color: #0A0A0A;
+}
+
+.deleteButton:disabled {
+  background-color: #CCCCCC;
+  cursor: not-allowed;
+}

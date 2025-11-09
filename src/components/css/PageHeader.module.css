@@ -4,26 +4,32 @@
   left: 0;
   width: 100%;
   background-color: #ffffff;
-  padding-top: 30px;
-  padding-bottom: 12px;
+  padding: 30px 0 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* 살짝 그림자 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .icon {
   position: absolute;
   left: 16px;
-  top: 35px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 6px;
   height: 12px;
   cursor: pointer;
+  user-select: none;
+}
+
+.icon:hover {
+  opacity: 0.7;
 }
 
 .title {
   color: #000000;
   font-weight: 600;
   font-size: 16px;
+  margin: 0;
 }
