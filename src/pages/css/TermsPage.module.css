@@ -1,0 +1,93 @@
+.container {
+    padding: 0 20px;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+  }
+  
+  .header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee;
+    margin: 0 -20px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+  
+  .icon {
+    position: absolute;
+    left: 20px;
+    width: 6px;
+    height: 12px;
+    cursor: pointer;
+  }
+  
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    text-align: center;
+  }
+  
+  .content {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    line-height: 1.6;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .content {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .intro {
+    margin-bottom: 20px;
+  }
+  
+  .sectionTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    color: #222;
+  }
+  
+  .card {
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+  
+  .card h4 {
+    font-size: 16px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  
+  .card p {
+    margin: 2px 0;
+  }
+  
+  .notice {
+    margin-top: 20px;
+    background-color: #fff7e6;
+    padding: 12px;
+    border-left: 4px solid #f6a500;
+    border-radius: 8px;
+  }
+  
+  .updateNote {
+    font-size: 12px;
+    color: #888;
+    margin-top: 20px;
+  }
+  
