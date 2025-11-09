@@ -1,0 +1,36 @@
+.wrapper {
+    margin-top: 30px;
+    position: relative;
+  }
+  
+  .label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4D4D4D;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .input {
+    border: none;
+    background: none;
+    border-bottom: 2px solid #B3B3B380;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    padding: 8px 0;
+    outline: none;
+    color: #000; /* 입력된 텍스트 색 */
+  }
+  
+  .input::placeholder {
+    color: #E5E5E5;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .input:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+  border: 1px solid #ddd;
+}
