@@ -88,8 +88,6 @@ const MainpageLogin = () => {
           <FestivalCard
             eventId={festival.eventId}
             commentCount={festival.comments}
-            mainText={festival.title}
-            subText={festival.category}
             festivalName={festival.title}
             dateRange={`${festival.startDate} ~ ${festival.endDate}`}
             price={festival.isFree === '무료' ? '무료' : '유료'}
