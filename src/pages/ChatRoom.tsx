@@ -12,6 +12,7 @@ import {
   subscribeToRoom,
   sendEnterMessage,
   sendLeaveMessage,
+  sendReadMessage,
 } from '../utils/socket';
 import axiosInstance from '../api/axiosInstance';
 
@@ -153,6 +154,12 @@ const ChatRoom: React.FC = () => {
       console.log('✅ STOMP 연결 완료');
       
       sendEnterMessage(Number(roomId));
+      
+      // 채팅방 입장 시 읽음 처리
+      setTimeout(() => {
+        sendReadMessage(Number(roomId));
+      }, 500);
+      
       subscribeToRoom(Number(roomId), (message) => {
         const body: WebSocketMessage = JSON.parse(message.body);
         console.log('📨 WebSocket 메시지 수신:', body);
@@ -182,6 +189,13 @@ const ChatRoom: React.FC = () => {
             }),
           },
         ]);
+        
+        // 다른 사람의 메시지를 받으면 읽음 처리
+        if (!isMyMessage && roomId) {
+          setTimeout(() => {
+            sendReadMessage(Number(roomId));
+          }, 300);
+        }
       });
     } catch (error) {
       console.error('WebSocket 연결 실패:', error);

@@ -43,6 +43,17 @@ export const sendLeaveMessage = (chatRoomId: number) => {
   stompClient.send(`/app/chat/room/${chatRoomId}/leave`, {}, '');
 };
 
+// ✅ 읽음 처리 함수 추가
+export const sendReadMessage = (chatRoomId: number) => {
+  if (!stompClient || !stompClient.connected) {
+    console.warn('⚠️ 읽음 처리 실패: STOMP 클라이언트가 연결되지 않았습니다.');
+    return;
+  }
+
+  stompClient.send(`/app/chat/room/${chatRoomId}/read`, {}, '');
+  console.log(`✅ 채팅방 ${chatRoomId} 읽음 처리 완료`);
+};
+
 // ✅ 연결 해제 함수 (옵션)
 export const disconnectStomp = () => {
   if (stompClient && stompClient.connected) {
