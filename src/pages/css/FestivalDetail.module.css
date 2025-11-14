@@ -1,0 +1,234 @@
+.container {
+    padding: 20px;
+    font-family: sans-serif;
+    background-color: #F5F5F5;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subtitle {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 12px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin: 6px 0;
+}
+
+.dateRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 세로 가운데 정렬 */
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.date {
+    font-size: 12px;
+}
+
+.status {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.imageContainer {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0;
+}
+
+.festivalImage {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+.websiteBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.websiteLeft {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.websiteTextBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    /* 여기서 간격 확실하게 조정 */
+}
+
+.websiteLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+    /* 꼭 필요 */
+    line-height: 1.0;
+    /* 높이도 조정 가능 */
+}
+
+.websiteLink {
+    display: inline-block;       /* 또는 block도 가능, 줄바꿈 안되게 */
+    max-width: 100%;             /* 부모 너비 기준 */
+    overflow: hidden;            /* 넘치는 부분 숨기기 */
+    white-space: nowrap;         /* 줄바꿈 금지 */
+    text-overflow: ellipsis;     /* ...으로 표시 */
+    color: #0077cc;
+    text-decoration: underline;
+    vertical-align: bottom;
+  }
+  
+
+
+.iconContainer {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.animate {
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+
+.websiteImage {
+    display: flex;
+    justify-content: center;
+    /* 가운데 정렬 */
+    margin: 16px 0;
+}
+
+.websiteImage img {
+    width: 90%;
+    /* 적당한 너비, 필요 시 100%로 조절 */
+    max-width: 600px;
+    /* 너무 커지지 않게 제한 */
+    height: auto;
+    /* 비율 유지 */
+    border-radius: 10px;
+    object-fit: cover;
+    /* 이미지가 이상하게 짤릴 때 대비 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.locationInfoRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px; /* 필요에 따라 조정 */
+}
+
+.mapIcon {
+  margin-right: 4px; /* 아이콘과 텍스트 사이 간격 */
+}
+
+.locationText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #929292;
+}
+.moreContainer {
+    position: relative;
+  }
+  
+  /* 드롭다운 슬라이드 애니메이션 */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .moreDropdown {
+    position: absolute;
+    top: 28px;
+    right: -10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.5s ease-out; /* ✅ 슬라이드 애니메이션 */
+  }
+  
+  /* 메뉴 항목 스타일 */
+  .moreDropdown > div {
+    padding: 10px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+  }
+  
+  /* 아래 밑줄 효과 */
+  .moreDropdown > div::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    bottom: 6px;
+    width: 0;
+    height: 2px;
+    background-color: #555;
+    transition: width 0.3s;
+  }
+  
+  .moreDropdown > div:hover::after {
+    width: calc(100% - 28px); /* 좌우 padding 제외한 너비 */
+  }
+  
+  .moreDropdown > div:hover {
+    background-color: #f7f7f7;
+  }
+  .locationInfoRow > img{
+    margin-left: 7px;
+    margin-right: 5px;
+  }

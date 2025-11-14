@@ -10,6 +10,10 @@ import AIRecommendPage from '../pages/AIRecommendPage'
 import ScrapEventsPage from '../pages/ScrapEventsPage'
 import TermsPage from '../pages/TermsPage'
 import DeleteAccountPage from '../pages/DeleteAccountPage'
+import AuthRedirect from '../pages/AuthRedirect'
+import EditProfilePage from '../pages/EditProfilePage'
+import FestivalAllPage from '../pages/FestivalAllPage'
+import FestivalDetail from '../pages/FestivalDetail'
 
 
 export const router = createBrowserRouter([
@@ -30,9 +34,12 @@ export const router = createBrowserRouter([
   { path: '/mainpage', element: <MainpageLogin /> },
   { path: '/ai', element: <AIRecommendPage /> },
   { path: '/popular', element: <PopularPage /> },
-      { path: '/scrap', element: <ScrapEventsPage /> },
-      { path: '/term', element: <TermsPage /> },
-      { path: '/register', element: <RegisterPage /> },
-      { path: '/delete', element: <DeleteAccountPage /> },
-
+  { path: '/fest/detail', element: <FestivalDetail /> },
+    { path: '/login-success', element: <AuthRedirect /> },
+    { path: '/fest/all', element: <FestivalAllPage /> },
+    { path: '/profile', element: <EditProfilePage /> },
+    { path: '/scrap', element: <ScrapEventsPage /> },
+    { path: '/term', element: <TermsPage /> },
+    { path: '/register', element: <RegisterPage /> },
+    { path: '/delete', element: <DeleteAccountPage /> },
 ])
