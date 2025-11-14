@@ -39,10 +39,10 @@ const AIRecommendPage = () => {
         refetchOnMount: true,
       },
       {
-        queryKey: ['popularEvents', 4],
+        queryKey: ['popularEvents', 20],
         queryFn: async (): Promise<CardItem[]> => {
           const res = await axiosInstance.get('/api/auth/user/event', {
-            params: { sortByPopularity: 'True', size: 4 },
+            params: { sortByPopularity: 'True', size: 20 },
           });
           const content = Array.isArray(res.data.data?.content)
             ? res.data.data.content

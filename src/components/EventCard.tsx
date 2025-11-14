@@ -44,7 +44,6 @@ const CardWrapper = styled.div `
   align-items: center;
   border-radius: 10px;
   overflow: hidden;
-  height: 96px; /* 고정 높이 설정 */
 `;
 
 // Thumbnail을 styled.img로 변경
