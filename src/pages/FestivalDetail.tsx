@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./css/FestivalDetail.module.css";
-import FestivalInfo from "../components/ FestivalInfo";
+import FestivalInfo from "../components/FestivalInfo";
 import FestivalMap from "../components/FestivalMap";
 import FestivalDescription from "../components/FestivalDescription";
 import { useNavigate, useSearchParams } from 'react-router-dom';
