@@ -1,0 +1,67 @@
+.chatroom-message {
+    display: flex;
+    width: 100%;
+    
+  margin-bottom: 20px; /* ✅ 메시지 사이 간격 */
+  }
+  
+  .chatroom-my-message {
+    justify-content: flex-start;
+  }
+  
+  .chatroom-other-message {
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+  
+  .chatroom-message-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 75%; /* ✅ 말풍선이 너무 길어지는 것 방지 */
+  }
+  
+  .chatroom-my-message .chatroom-message-wrapper {
+    align-items: flex-start;
+  }
+  
+  .chatroom-other-message .chatroom-message-wrapper {
+    align-items: flex-end;
+  }
+  .chatroom-message-bubble {
+    border-radius: 16px;
+    padding: 10px 14px;
+    word-break: break-word;
+  }
+  
+  .chatroom-my-message .chatroom-message-bubble {
+    background-color: #3977F4;
+    color: white;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chatroom-other-message .chatroom-message-bubble {
+    
+    background-color: #FFFCFD;
+    color: #1A1A1A;
+  }
+  
+  .chatroom-message-text {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .chatroom-message-time {
+  font-size: 12px;
+  color: #B3B3B3;
+  margin-top: 4px;  /* ✅ 말풍선 아래에 자연스럽게 시간 표시 */
+}
+  
+  .chatroom-my-message .chatroom-message-time {
+    right: -35px;
+  }
+  
+  .chatroom-other-message .chatroom-message-time {
+    left: -35px;
+  }
+  

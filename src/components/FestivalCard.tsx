@@ -5,23 +5,19 @@ import axiosInstance from '../api/axiosInstance';
 interface FestivalCardProps {
   eventId: number;
   commentCount: number;
-  mainText: string;
-  subText: string;
   festivalName: string;
   dateRange: string;
   price: string;
   location: string;
   likedDefault?: boolean;
-  mainImg?: string; // ✅ 추가
-  rating: number;      // ⭐ 평점
+  mainImg?: string;
+  rating: number;
   likes: number;  
 }
 
 const FestivalCard = ({
   eventId,
   commentCount,
-  mainText,
-  subText,
   festivalName,
   dateRange,
   price,
@@ -30,7 +26,7 @@ const FestivalCard = ({
   mainImg,
   rating,
   likes,
-}: FestivalCardProps & { mainImg?: string }) => {
+}: FestivalCardProps) => {
   const [liked, setLiked] = useState(likedDefault);
   const navigate = useNavigate(); 
   const handleToggleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,12 +51,7 @@ const FestivalCard = ({
   return (
     <>
       <CardWrapper $background={mainImg} onClick={handleClick}>
-        <CommentBadge>평점 {rating.toFixed(1)}</CommentBadge>
-
-        <ContentWrapper>
-          <MainText>{mainText}</MainText>
-          <SubText>{subText}</SubText>
-        </ContentWrapper>
+        <CommentBadge>평점 {rating ? rating.toFixed(1) : '0.0'}</CommentBadge>
 
         <HeartButton onClick={handleToggleLike}>
           <img
@@ -86,7 +77,7 @@ const FestivalCard = ({
             <MetricsWrapper>
               <MetricItem>
                 <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
-                <span style={{ color: '#FFB200' }}>{rating.toFixed(1)}</span>
+                <span style={{ color: '#FFB200' }}>{rating ? rating.toFixed(1) : '0.0'}</span>
               </MetricItem>
               <MetricItem>
                 <img src="/assets/FestivalCard/heart-mini.svg" alt="좋아요" />
@@ -129,9 +120,10 @@ const CardWrapper = styled.div<{ $background?: string }>`
       $background
         ? ` url(${$background})`
         : 'none'};
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: #f5f5f5;
     z-index: 0;
     transition: background-image 0.3s ease-in-out;
   }
@@ -154,29 +146,6 @@ const CommentBadge = styled.div`
   border-radius: 36px;
   font-size: 16px;
   font-weight: 600;
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background: linear-gradient(to top, rgb(255 255 255 / 64%), rgb(255 255 255 / 37%));
-`;
-
-
-const MainText = styled.div`
-  color: black; /* 기존 rgb(0, 0, 0) → white */
-  font-weight: 600;
-  font-size: 24px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const SubText = styled.div`
-  color: black; /* 기존 0.5 → 더 선명하게 */
-  font-weight: 500;
-  font-size: 16px;
 `;
 
 const HeartButton = styled.button`

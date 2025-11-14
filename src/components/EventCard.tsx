@@ -50,9 +50,10 @@ const CardWrapper = styled.div `
 const Thumbnail = styled.img`
   width: 80px;
   height: 80px;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
   border-radius: 10px;
+  background-color: #f5f5f5;
 `;
 
 
@@ -61,6 +62,8 @@ const EventInfo = styled.div `
   display: flex;
   flex-direction: column;
   justify-content: center;
+  flex: 1;
+  min-width: 0; /* flex 아이템의 텍스트 오버플로우 처리 */
 `;
 
 const Category = styled.div `
@@ -75,9 +78,13 @@ const TitleText = styled.div`
   margin: 4px 0;
   color: #000;
 
-  white-space: nowrap;       /* 줄바꿈 없이 한 줄 */
-  overflow: hidden;          /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis;   /* 넘치는 부분 ...으로 표시 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 최대 2줄 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  max-height: 2.6em; /* 2줄 높이 제한 */
 `;
 
 const SubInfo = styled.div `

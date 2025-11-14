@@ -11,25 +11,22 @@ import PageHeader from '../components/PageHeader';
 
 const EditProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const { nickname, email, gender, birth, setUserInfo } = useUserStore();
+  const { nickname, email, gender, setUserInfo } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // 페이지 로드 시 사용자 정보 가져오기
     const fetchUserProfile = async () => {
       try {
-        const response = await axiosInstance.get('/api/auth/user/feature');
+        const response = await axiosInstance.get('/api/auth/user/info');
         if (response.status === 200) {
           const userData = response.data.data;
-
-          // 생년월일 파싱
-          const [year, month, day] = userData.birthday.split('-');
 
           setUserInfo({
             nickname: userData.username,
             email: userData.email,
             gender: userData.gender,
-            birth: { year, month, day },
+            birth: { year: '', month: '', day: '' }, // birthday 없음
           });
         }
       } catch (error) {
@@ -41,11 +38,8 @@ const EditProfilePage: React.FC = () => {
     fetchUserProfile();
   }, [setUserInfo]);
 
-  const isBirthFilled = birth.year !== '' && birth.month !== '' && birth.day !== '';
-  const isGenderFilled = gender !== '';
   const isNicknameFilled = nickname.trim() !== '';
-
-  const isFormValid = isBirthFilled && isGenderFilled && isNicknameFilled;
+  const isFormValid = isNicknameFilled; // 닉네임만 필수
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
@@ -53,11 +47,8 @@ const EditProfilePage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const birthday = `${birth.year}-${birth.month.padStart(2, '0')}-${birth.day.padStart(2, '0')}`;
-
       const requestBody = {
         username: nickname,
-        birthday,
         gender,
         email,
       };

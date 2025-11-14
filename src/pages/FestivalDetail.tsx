@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./css/FestivalDetail.module.css";
 import FestivalInfo from "../components/FestivalInfo";
-import FestivalMap from "../components/FestivalMap";
 import FestivalDescription from "../components/FestivalDescription";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axiosInstance from "../api/axiosInstance";
@@ -71,8 +70,8 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
 
   useEffect(() => {
     if (data) {
-      setLiked(data.currentUserLike === true);
-      setFavorited(data.currentUserFavorite === true);
+      setLiked(data.likes > 0); // API에 currentUserLike가 없으므로 likes 개수로 임시 처리
+      setFavorited(data.favorites > 0); // API에 currentUserFavorite가 없으므로 favorites 개수로 임시 처리
     }
   }, [data]);
   
@@ -83,11 +82,11 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
   const status = getStatus(data.startDate, data.endDate);
 
   const detailInfo = {
-    location: data.place,
+    location: "정보 없음", // place 필드 없음
     date: `${data.startDate.replace(/-/g, ".")} ~ ${data.endDate.replace(/-/g, ".")}`,
-    fee: data.useFee || data.isFree,
-    people: data.useTarget || "정보 없음",
-    mask: data.player || "출연자 정보 없음",
+    fee: data.useFee || (data.isFree === "Y" ? "무료" : "유료"),
+    people: "정보 없음", // useTarget 필드 없음
+    mask: "정보 없음", // player 필드 없음
     buliding: data.orgName || "기관 정보 없음",
   };
 
@@ -155,11 +154,11 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
 
       <div className={styles.locationInfoRow}>
         <img src="/assets/detail/map.svg" alt="Map Icon" className={styles.mapIcon} />
-        <span className={styles.locationText}>{data.guName || "어디구 있지도 있어"}</span>
+        <span className={styles.locationText}>{data.category || "카테고리"}</span>
         <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
-        <span style={{ color: '#FFB200' }}>{data.rating.toFixed(1)}</span>
+        <span style={{ color: '#FFB200' }}>0.0</span>
         <img src="/assets/FestivalCard/heart-mini.svg" alt="좋아요" />
-                <span style={{ color: '#CC4E00' }}>{data.likes}</span>
+        <span style={{ color: '#CC4E00' }}>{data.likes || 0}</span>
       </div>
 
       <div className={styles.dateRow}>
@@ -216,31 +215,9 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
         <img src={data.mainImg} alt="Festival Cover" />
       </div>
 
-      <div className={styles.websiteBox}>
-        <div className={styles.websiteLeft}>
-          <img src="/assets/earth.svg" alt="Earth Icon" />
-          <div className={styles.websiteTextBox}>
-            <p className={styles.websiteLabel}>웹사이트 방문</p>
-            <a
-              href={data.orgLink}
-              className={styles.websiteLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={data.orgLink}
-            ></a>
-          </div>
-        </div>
-        <img
-          src="/assets/detail/slash.svg"
-          alt="Slash Icon"
-          onClick={() => window.open(data.orgLink, "_blank")}
-          className={styles.slashIcon}
-        />
-      </div>
-
       <FestivalInfo values={detailInfo} />
-      <FestivalMap lat={parseFloat(data.lot)} lng={parseFloat(data.lat)} guName={data.guName} />
-      <FestivalDescription content={data.introduce || "등록된 설명이 없습니다."} />
+      {/* FestivalMap 제거 - lat, lot 필드 없음 */}
+      <FestivalDescription content={data.timeInfo || "등록된 시간 정보가 없습니다."} />
       <div ref={commentSectionRef}>
         <CommentSection eventId={eventId!} />
       </div>
