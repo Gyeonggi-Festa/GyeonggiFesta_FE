@@ -1,0 +1,196 @@
+.chat-container {
+    padding: 20px;
+    background-color: #fff;
+  }
+  .chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.chat-tit {
+  font-size: 24px;
+  font-weight: 700;
+  color: #373737;
+}
+.chat-icon {
+  width: 24px;
+  height: 24px;
+}
+
+  .chat-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #373737;
+    margin-bottom: 10px;
+
+  }
+  
+  .chat-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #858585;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+  
+  .chat-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-filter-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-button {
+  border-radius: 99px;
+  border: 2px solid #000;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  background: none;
+  color: #000;
+  cursor: pointer;
+}
+.divider {
+  width: calc(100% + 40px);
+  height: 8px;
+  background-color: #EDEDED;
+  margin-left: -20px; /* 좌우 20px씩 밀어서 가운데 정렬처럼 보이게 */
+}
+
+.filter-button.selected {
+  background: #000;
+  color: #fff;
+}
+.group-chat-section {
+  margin-top: 24px;
+}
+
+.group-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.group-chat-title {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 9px;
+}
+
+.group-category-list {
+  display: flex;
+  flex-wrap: nowrap; /* 줄바꿈 안 되게 */
+  overflow-x: auto;   /* 가로 스크롤 */
+  gap: 8px;
+  scrollbar-width: none; /* Firefox */
+  white-space: nowrap; /* 핵심: 텍스트 줄바꿈 방지 */
+  /* ✅ 스냅 기능 */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+}
+.group-category-list::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.category-button {
+  font-size: 12px;
+  font-weight: 500;
+  color: #A4A4A4;
+  background: none;
+  border: none;
+  padding: 4px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;      /* 핵심: 버튼 안 텍스트 줄바꿈 방지 */
+  flex-shrink: 0;            /* 핵심: 버튼이 너무 작아지지 않게 */
+  /* ✅ 스냅 포인트 지정 */
+  scroll-snap-align: start;
+}
+
+.category-button.selected {
+  color: #000;
+  border-bottom: 2px solid #000;
+}
+.search-input {
+  width: 100%;
+  font-size: 12px;
+  padding: 8px 12px;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  background-color: #dfdfdf36;  /* ✅ 배경 수정 */
+  color: #333;
+  transition: all 0.2s ease;
+  margin-bottom: 6px;
+}
+
+
+.search-input::placeholder {
+  color: #C2C2C2;              /* ✅ placeholder 색상 */
+  font-weight: 500;
+}
+
+
+  
+.load-more-button {
+  margin: 3px auto 0;
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border: none;
+  background-color: #f8f8f8;  /* 약간 흐린 회색 */
+  border-radius: 99px;
+  color: #999; /* 흐린 글씨색 */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-bottom: 80px;
+  margin-top: 10px;
+}
+.floating-plus-button {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  background-color: #3977F4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 999;
+}
+
+.floating-plus-button img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1); /* 흰색 아이콘으로 보이게 */
+}
+
+.search-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  padding-left: 2px;
+}
+.search-toggle {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #BBBBBB;
+  cursor: pointer;
+  min-width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
