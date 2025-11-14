@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import HomePage from '../pages/Mainpage'
+import CreateGroupChat from '../pages/CreateGroupChat'
 import RegisterPage from '../pages/RegisterPage'
 import MainpageLogin from '../pages/MainpageLogin'
 import MyPage from '../pages/MyPage'
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
     
   },
   { path: '/chat', element: <Chat /> },
+    { path: '/chat/create-group', element: <CreateGroupChat /> },
   { path: '/mypage', element: <MyPage /> },
   { path: '/mainpage', element: <MainpageLogin /> },
   { path: '/ai', element: <AIRecommendPage /> },
