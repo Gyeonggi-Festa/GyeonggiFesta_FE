@@ -30,6 +30,7 @@ const MyPage = () => {
         });
       } catch (err) {
         console.error('유저 정보 불러오기 실패', err);
+        
       }
     };
 

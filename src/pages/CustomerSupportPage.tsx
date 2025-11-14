@@ -27,7 +27,7 @@ const CustomerSupportPage: React.FC = () => {
     if (item === '회원탈퇴를 하고 싶어요.') {
       navigate('/delete');
     } else {
-      window.open('https://open.kakao.com/o/sXpLyXuh', '_blank');
+      window.open('https://open.kakao.com/o/gOhxe11h', '_blank');
     }
   };
 
