@@ -8,8 +8,10 @@
 
 .mainImage{
   z-index: 1000;
-  width: 258px; /* 기본 크기 */
-  height: 350px; /* 기본 크기 */
+  width: 100%;
+  max-width: 258px; /* 최대 너비 제한 */
+  height: auto; /* 비율 자동 유지 */
+  object-fit: contain; /* 이미지 비율 보존 */
 }
 
 .titleContainer {
