@@ -41,23 +41,25 @@ const ChatRoom: React.FC = () => {
   const { roomTitle, participantCount } = location.state || {};
   const [isOwner, setIsOwner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
-  // ✅ 경로에 따라 수정 필요
-  
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
         const response = await axiosInstance.get(`/api/auth/user/chatrooms/${roomId}/memberInfo`);
-        const memberInfo = response.data.data?.[0];
-        setIsOwner(memberInfo.role === 'OWNER');
-        fetchMessages(memberInfo.verifyId);
-        setupWebSocket(memberInfo.verifyId);
-
+        const members = response.data.data;
+        
+        // 현재 사용자의 정보 찾기 (배열의 첫 번째 요소가 현재 사용자)
+        const currentUserInfo = members[0];
+        
+        if (currentUserInfo) {
+          setIsOwner(currentUserInfo.role === 'OWNER');
+          fetchMessages(currentUserInfo.verifyId);
+          setupWebSocket(currentUserInfo.verifyId);
+        }
       } catch (error) {
         console.error('방장 여부 확인 실패:', error);
       }
     };
     
-  
     if (roomId) {
       fetchMemberInfo();
     }
@@ -82,7 +84,6 @@ const ChatRoom: React.FC = () => {
   
     setMessages(sortedMessages);
   };
-  
   
   const setupWebSocket = async (verifyId: string) => {
     if (!roomId) return;
