@@ -215,28 +215,6 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
         <img src={data.mainImg} alt="Festival Cover" />
       </div>
 
-      <div className={styles.websiteBox}>
-        <div className={styles.websiteLeft}>
-          <img src="/assets/earth.svg" alt="Earth Icon" />
-          <div className={styles.websiteTextBox}>
-            <p className={styles.websiteLabel}>웹사이트 방문</p>
-            <a
-              href={data.orgLink}
-              className={styles.websiteLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={data.orgLink}
-            ></a>
-          </div>
-        </div>
-        <img
-          src="/assets/detail/slash.svg"
-          alt="Slash Icon"
-          onClick={() => window.open(data.orgLink, "_blank")}
-          className={styles.slashIcon}
-        />
-      </div>
-
       <FestivalInfo values={detailInfo} />
       {/* FestivalMap 제거 - lat, lot 필드 없음 */}
       <FestivalDescription content={data.timeInfo || "등록된 시간 정보가 없습니다."} />
