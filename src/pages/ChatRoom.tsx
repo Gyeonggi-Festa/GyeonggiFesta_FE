@@ -52,8 +52,8 @@ const ChatRoom: React.FC = () => {
         
         if (currentUserInfo) {
           setIsOwner(currentUserInfo.role === 'OWNER');
-          fetchMessages(currentUserInfo.verifyId);
-          setupWebSocket(currentUserInfo.verifyId);
+          await fetchMessages(currentUserInfo.verifyId);
+          await setupWebSocket(currentUserInfo.verifyId);
         }
       } catch (error) {
         console.error('방장 여부 확인 실패:', error);
@@ -63,50 +63,68 @@ const ChatRoom: React.FC = () => {
     if (roomId) {
       fetchMemberInfo();
     }
+    
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      if (roomId) {
+        sendLeaveMessage(Number(roomId));
+        disconnectStomp();
+      }
+    };
   }, [roomId]);
 
   const fetchMessages = async (verifyId: string) => {
-    const response = await axiosInstance.get<{ data: { content: RawMessage[] } }>(
-      `/api/auth/user/chat/rooms/${roomId}/messages`
-    );
-  
-    const sortedMessages: ChatMessageData[] = response.data.data.content
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-      .map((msg) => ({
-        id: msg.messageId,
-        sender: msg.senderVerifyId === verifyId ? 'other' : 'me',
-        message: msg.content,
-        time: new Date(msg.createdAt).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-      }));
-  
-    setMessages(sortedMessages);
+    try {
+      const response = await axiosInstance.get<{ data: { content: RawMessage[] } }>(
+        `/api/auth/user/chat/rooms/${roomId}/messages`
+      );
+    
+      const sortedMessages: ChatMessageData[] = response.data.data.content
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        .map((msg) => ({
+          id: msg.messageId,
+          sender: msg.senderVerifyId === verifyId ? 'me' : 'other', // 수정: 본인 메시지는 'me'
+          message: msg.content,
+          time: new Date(msg.createdAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        }));
+    
+      setMessages(sortedMessages);
+    } catch (error) {
+      console.error('메시지 불러오기 실패:', error);
+    }
   };
   
   const setupWebSocket = async (verifyId: string) => {
     if (!roomId) return;
-    await connectStomp();
-    if (subscribedRef.current) return;
-    subscribedRef.current = true;
-  
-    sendEnterMessage(Number(roomId));
-    subscribeToRoom(Number(roomId), (message) => {
-      const body = JSON.parse(message.body);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: body.messageId,
-          sender: body.senderVerifyId === verifyId ? 'other' : 'me',
-          message: body.content,
-          time: new Date(body.createdAt).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        },
-      ]);
-    });
+    
+    try {
+      if (subscribedRef.current) return;
+      subscribedRef.current = true;
+      
+      await connectStomp();
+      sendEnterMessage(Number(roomId));
+      subscribeToRoom(Number(roomId), (message) => {
+        const body = JSON.parse(message.body);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: body.messageId,
+            sender: body.senderVerifyId === verifyId ? 'me' : 'other', // 수정: 본인 메시지는 'me'
+            message: body.content,
+            time: new Date(body.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          },
+        ]);
+      });
+    } catch (error) {
+      console.error('WebSocket 연결 실패:', error);
+      subscribedRef.current = false; // 연결 실패 시 재시도 가능하도록
+    }
   };
 
   useEffect(() => {
