@@ -1,0 +1,160 @@
+.chat-body {
+    /* ✅ 고정 헤더 높이만큼 확보 */
+    padding: 100px 20px 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
+    /* ✅ 전체 높이 - 헤더 */
+}
+
+.chat-input-container {
+    position: fixed;
+    left: 0;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.chat-input-box {
+    width: 90%;
+    height: 44px;
+    background-color: #1a1a1a11;
+    filter: blur(0.5px);
+    border-radius: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    transition: all 0.3s ease;
+}
+
+.chat-input-box.focused {
+    width: 90%;
+    filter: none;
+}
+
+.chat-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: #b3b3b3;
+    flex: 1;
+}
+
+.chat-input-box.focused .chat-input {
+    color: black;
+}
+
+.send-button {
+    width: 32px;
+    height: 32px;
+    background: #999999;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.send-button.active {
+    background-color: #3977F4;
+    color: #ffffff;
+}
+
+.send-icon {
+    width: 20px;
+    height: 20px;
+}
+.chat-header {
+    position: fixed;
+    /* ✅ 상단 고정 */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    /* ✅ 메뉴보다 위에 표시되게 */
+    background-color: white;
+    /* ✅ 배경색 필수 (내용 가림 방지) */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    /* ✅ 선택 */
+}
+
+.header-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.header-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.room-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A1A1A;
+}
+
+.participant-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.person-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.participant-count {
+    font-size: 12px;
+    font-weight: 500;
+    color: #4D4D4D;
+}
+/* ChatRoom.module.css */
+.menu-popup {
+    position: absolute;
+    top: 56px;
+    right: 12px;
+    background-color: #3977F4;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 100000;
+}
+
+.menu-popup button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 8px;
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.menu-popup button:hover {
+    background-color: #f5f5f5;
+}
+/* ChatRoom.module.css */
+.edit-icon {
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+  cursor: pointer;
+}

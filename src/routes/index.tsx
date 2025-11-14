@@ -3,6 +3,7 @@ import HomePage from '../pages/Mainpage'
 import RegisterPage from '../pages/RegisterPage'
 import MainpageLogin from '../pages/MainpageLogin'
 import MyPage from '../pages/MyPage'
+import ChatRoom from '../pages/ChatRoom'
 import CustomerSupportPage from '../pages/CustomerSupportPage'
 import BackgroundLayout from '../Layout/BackgroundLayout'
 import PopularPage from '../pages/PopularPage'
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
   { path: '/ai', element: <AIRecommendPage /> },
   { path: '/popular', element: <PopularPage /> },
   { path: '/fest/detail', element: <FestivalDetail /> },
+    { path: '/chat/room/:roomId', element: <ChatRoom /> },
     { path: '/login-success', element: <AuthRedirect /> },
     { path: '/fest/all', element: <FestivalAllPage /> },
     { path: '/profile', element: <EditProfilePage /> },
