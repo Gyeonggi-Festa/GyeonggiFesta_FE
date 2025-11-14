@@ -1,0 +1,68 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.topInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.meta {
+  font-size: 12px;
+  font-weight: 500;
+  color: #888888;
+  margin-left: 10px;
+}
+
+.row {
+  display: flex;
+  
+  align-items: flex-start;
+  gap: 35px;
+}
+
+.profileImg {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.content {
+  font-size: 12px;
+  font-weight: 400;
+  color: #4D4D4D;
+  line-height: 1.5;
+  
+  padding-top: 5px;
+}
+
+.divider {
+  margin-top: 12px;
+  height: 1px;
+  background-color: #E0E0E0;
+}
+/* ReviewItem.module.css */
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #cc4e00;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  font-size: 14px;
+}
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
