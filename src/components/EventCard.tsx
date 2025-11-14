@@ -71,7 +71,7 @@ const Category = styled.div `
 `;
 
 const TitleText = styled.div`
-  font-size: 14px;
+  font-size: 7px;
   font-weight: 600;
   margin: 4px 0;
   color: #000;
