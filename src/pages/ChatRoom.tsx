@@ -41,22 +41,50 @@ const ChatRoom: React.FC = () => {
   const { roomTitle, participantCount } = location.state || {};
   const [isOwner, setIsOwner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
+  const [verifyId, setVerifyId] = useState<string>(''); // verifyId 상태 추가
+  
   useEffect(() => {
     const fetchMemberInfo = async () => {
+      if (!roomId) {
+        console.error('roomId가 없습니다.');
+        return;
+      }
+      
       try {
+        console.log(`채팅방 멤버 정보 요청: roomId=${roomId}`);
         const response = await axiosInstance.get(`/api/auth/user/chatrooms/${roomId}/memberInfo`);
+        console.log('멤버 정보 응답:', response.data);
+        
         const members = response.data.data;
+        
+        if (!members || members.length === 0) {
+          console.error('멤버 정보가 비어있습니다.');
+          alert('채팅방 정보를 불러올 수 없습니다.');
+          navigate('/chat');
+          return;
+        }
         
         // 현재 사용자의 정보 찾기 (배열의 첫 번째 요소가 현재 사용자)
         const currentUserInfo = members[0];
         
         if (currentUserInfo) {
+          setVerifyId(currentUserInfo.verifyId);
           setIsOwner(currentUserInfo.role === 'OWNER');
           await fetchMessages(currentUserInfo.verifyId);
           await setupWebSocket(currentUserInfo.verifyId);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('방장 여부 확인 실패:', error);
+        
+        if (error?.response?.status === 404) {
+          alert('존재하지 않는 채팅방이거나 접근 권한이 없습니다.');
+          navigate('/chat');
+        } else if (error?.response?.status === 401) {
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+        } else {
+          alert('채팅방 정보를 불러오는 중 오류가 발생했습니다.');
+        }
       }
     };
     
@@ -66,7 +94,7 @@ const ChatRoom: React.FC = () => {
     
     // 컴포넌트 언마운트 시 정리
     return () => {
-      if (roomId) {
+      if (roomId && verifyId) {
         sendLeaveMessage(Number(roomId));
         disconnectStomp();
       }
