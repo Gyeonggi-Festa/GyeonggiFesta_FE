@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { connectStomp, sendEnterMessage } from '../utils/socket';
 import axiosInstance from '../api/axiosInstance';
 import GroupChatJoinModal from './GroupChatJoinModal';
+
 interface GroupChatItemProps {
   chatRoomId: number;
   name: string;
