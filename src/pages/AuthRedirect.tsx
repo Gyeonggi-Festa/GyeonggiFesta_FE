@@ -17,7 +17,7 @@ const AuthRedirect = () => {
     const exchangeCodeForToken = async () => {
       try {
         const response = await axios.post(
-          `https://13.125.224.67.nip.io/api/token/exchange?code=${code}`,
+          `https://api.gyeonggifesta.site/api/token/exchange?code=${code}`,
           null,
           {
             headers: {

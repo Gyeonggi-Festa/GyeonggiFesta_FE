@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://13.125.224.67.nip.io',
+  baseURL: 'https://api.gyeonggifesta.site',
 });
 
 axiosInstance.interceptors.request.use(

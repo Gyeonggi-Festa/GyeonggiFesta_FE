@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const MainPage = () => {
     const handleKakaoLogin = () => {
-        window.location.href = "https://13.125.224.67.nip.io/oauth2/authorization/kakao";
+        window.location.href = "https://api.gyeonggifesta.site/oauth2/authorization/kakao";
     };
 
     return (

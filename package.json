@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@stomp/stompjs": "^7.1.1",
-    "@tanstack/react-query": "^5.75.1",
+    "@tanstack/react-query": "^5.90.8",
     "axios": "^1.8.4",
     "framer-motion": "^12.9.4",
     "immer": "^10.1.1",
