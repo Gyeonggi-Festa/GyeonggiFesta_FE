@@ -7,7 +7,7 @@ let stompClient: CompatClient | null = null;
 export const connectStomp = (): Promise<CompatClient> => {
   return new Promise((resolve, reject) => {
     const accessToken = localStorage.getItem('access_token');
-    const socket = new SockJS('https://13.125.224.67.nip.io/ws-stomp');
+    const socket = new SockJS('https://api.gyeonggifesta.site/ws-stomp');
     stompClient = Stomp.over(socket);
 
     stompClient.connect(
