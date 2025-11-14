@@ -129,9 +129,10 @@ const CardWrapper = styled.div<{ $background?: string }>`
       $background
         ? ` url(${$background})`
         : 'none'};
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: #f5f5f5;
     z-index: 0;
     transition: background-image 0.3s ease-in-out;
   }

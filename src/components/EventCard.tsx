@@ -50,9 +50,10 @@ const CardWrapper = styled.div `
 const Thumbnail = styled.img`
   width: 80px;
   height: 80px;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
   border-radius: 10px;
+  background-color: #f5f5f5;
 `;
 
 
