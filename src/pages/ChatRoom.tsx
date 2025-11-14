@@ -27,6 +27,19 @@ interface RawMessage {
   content: string;
   createdAt: string;
 }
+
+interface WebSocketMessage {
+  messageId: number;
+  chatRoomId: number;
+  senderId: number;
+  senderName: string;
+  senderVerifyId?: string; // 선택적으로 추가 (서버 응답에 따라)
+  content: string;
+  type: 'TEXT' | 'IMAGE' | 'FILE';
+  createdAt: string;
+  isDeleted: boolean;
+  mediaUrl?: string;
+}
 const ChatRoom: React.FC = () => {
   const [focused, setFocused] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -141,13 +154,28 @@ const ChatRoom: React.FC = () => {
       
       sendEnterMessage(Number(roomId));
       subscribeToRoom(Number(roomId), (message) => {
-        const body = JSON.parse(message.body);
+        const body: WebSocketMessage = JSON.parse(message.body);
+        console.log('📨 WebSocket 메시지 수신:', body);
+        
+        // 이미지/파일 메시지 처리
+        let displayContent = body.content;
+        if (body.type === 'IMAGE' && body.mediaUrl) {
+          displayContent = `[이미지: ${body.mediaUrl}]`;
+        } else if (body.type === 'FILE' && body.mediaUrl) {
+          displayContent = `[파일: ${body.content}]`;
+        }
+        
+        // verifyId나 senderName으로 본인 메시지 판별
+        const isMyMessage = body.senderVerifyId 
+          ? body.senderVerifyId === verifyId 
+          : body.senderName === localStorage.getItem('username'); // 또는 다른 방법
+        
         setMessages((prev) => [
           ...prev,
           {
             id: body.messageId,
-            sender: body.senderVerifyId === verifyId ? 'me' : 'other', // 수정: 본인 메시지는 'me'
-            message: body.content,
+            sender: isMyMessage ? 'me' : 'other',
+            message: displayContent,
             time: new Date(body.createdAt).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
