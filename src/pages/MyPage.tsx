@@ -20,23 +20,13 @@ const MyPage = () => {
     const fetchUserInfo = async () => {
       try {
         const res = await axiosInstance.get('/api/auth/user/info');
-        console.log('서버 응답:', res.data.data); // 디버깅용
-        
-        const userData = res.data.data;
-        const { username, email, gender, birthday } = userData;
-
-        let birthInfo = { year: '', month: '', day: '' };
-        
-        if (birthday && typeof birthday === 'string') {
-          const [year, month, day] = birthday.split('-');
-          birthInfo = { year, month, day };
-        }
+        const { username, email, gender } = res.data.data;
 
         setUserInfo({
           nickname: username,
           email,
           gender,
-          birth: birthInfo,
+          birth: { year: '', month: '', day: '' },
         });
       } catch (err) {
         console.error('유저 정보 불러오기 실패', err);
@@ -55,6 +45,7 @@ const MyPage = () => {
     >
       <p className={styles.welcome}>
         {nickname}님,
+        8 
         <br />
         반갑습니다.
       </p>
