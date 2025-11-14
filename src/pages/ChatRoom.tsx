@@ -30,15 +30,19 @@ interface RawMessage {
 }
 
 interface WebSocketMessage {
-  messageId: number;
+  messageId?: number;
   chatRoomId: number;
-  senderId: number;
-  senderName: string;
-  senderVerifyId?: string; // 선택적으로 추가 (서버 응답에 따라)
-  content: string;
-  type: 'TEXT' | 'IMAGE' | 'FILE';
-  createdAt: string;
-  isDeleted: boolean;
+  senderId?: number;
+  senderName?: string;
+  senderVerifyId?: string;
+  memberId?: number;
+  memberName?: string;
+  content?: string;
+  type?: 'TEXT' | 'IMAGE' | 'FILE';
+  eventType?: 'JOIN' | 'LEAVE';
+  createdAt?: string;
+  timestamp?: string;
+  isDeleted?: boolean;
   mediaUrl?: string;
 }
 const ChatRoom: React.FC = () => {
@@ -164,6 +168,25 @@ const ChatRoom: React.FC = () => {
         const body: WebSocketMessage = JSON.parse(message.body);
         console.log('📨 WebSocket 메시지 수신:', body);
         
+        // 입장/퇴장 이벤트 처리
+        if (body.eventType === 'JOIN') {
+          console.log(`👋 ${body.memberName}님이 입장했습니다.`);
+          // 필요시 UI에 입장 메시지 표시
+          return;
+        }
+        
+        if (body.eventType === 'LEAVE') {
+          console.log(`👋 ${body.memberName}님이 퇴장했습니다.`);
+          // 필요시 UI에 퇴장 메시지 표시
+          return;
+        }
+        
+        // 일반 채팅 메시지 처리
+        if (!body.messageId || !body.content) {
+          console.warn('⚠️ 메시지 ID 또는 내용이 없습니다:', body);
+          return;
+        }
+        
         // 이미지/파일 메시지 처리
         let displayContent = body.content;
         if (body.type === 'IMAGE' && body.mediaUrl) {
@@ -175,15 +198,15 @@ const ChatRoom: React.FC = () => {
         // verifyId나 senderName으로 본인 메시지 판별
         const isMyMessage = body.senderVerifyId 
           ? body.senderVerifyId === verifyId 
-          : body.senderName === localStorage.getItem('username'); // 또는 다른 방법
+          : body.senderName === localStorage.getItem('username');
         
         setMessages((prev) => [
           ...prev,
           {
-            id: body.messageId,
+            id: body.messageId!,
             sender: isMyMessage ? 'me' : 'other',
             message: displayContent,
-            time: new Date(body.createdAt).toLocaleTimeString([], {
+            time: new Date(body.createdAt || body.timestamp || new Date()).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
             }),

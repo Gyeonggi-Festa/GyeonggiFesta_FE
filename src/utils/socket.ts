@@ -30,6 +30,7 @@ export const sendEnterMessage = (chatRoomId: number) => {
     return;
   }
 
+  console.log(`📨 채팅방 ${chatRoomId} 입장 메시지 전송`);
   stompClient.send(`/app/chat/room/${chatRoomId}/enter`, {}, '');
 };
 
@@ -82,6 +83,7 @@ export const sendChatMessage = (
     tempS3Key,
   };
 
+  console.log('📤 메시지 전송:', messagePayload);
   stompClient.send(
     '/app/chat/message',
     {},
