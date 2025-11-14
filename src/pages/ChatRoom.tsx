@@ -36,6 +36,7 @@ const ChatRoom: React.FC = () => {
   const navigate = useNavigate();
   
   const subscribedRef = useRef(false);
+  const stompConnectedRef = useRef(false); // STOMP 연결 상태 추적
   const location = useLocation();
 
   const { roomTitle, participantCount } = location.state || {};
@@ -94,9 +95,11 @@ const ChatRoom: React.FC = () => {
     
     // 컴포넌트 언마운트 시 정리
     return () => {
-      if (roomId && verifyId) {
+      if (roomId && stompConnectedRef.current) {
+        console.log('🛑 채팅방 나가기 - STOMP 정리 시작');
         sendLeaveMessage(Number(roomId));
         disconnectStomp();
+        stompConnectedRef.current = false;
       }
     };
   }, [roomId]);
@@ -133,6 +136,9 @@ const ChatRoom: React.FC = () => {
       subscribedRef.current = true;
       
       await connectStomp();
+      stompConnectedRef.current = true; // STOMP 연결 완료 표시
+      console.log('✅ STOMP 연결 완료');
+      
       sendEnterMessage(Number(roomId));
       subscribeToRoom(Number(roomId), (message) => {
         const body = JSON.parse(message.body);
@@ -152,6 +158,7 @@ const ChatRoom: React.FC = () => {
     } catch (error) {
       console.error('WebSocket 연결 실패:', error);
       subscribedRef.current = false; // 연결 실패 시 재시도 가능하도록
+      stompConnectedRef.current = false;
     }
   };
 
@@ -175,9 +182,11 @@ const ChatRoom: React.FC = () => {
           alt="뒤로가기"
           className={styles['header-icon']}
           onClick={() => {
-            if (roomId) sendLeaveMessage(Number(roomId));
-            disconnectStomp();
-            navigate('/chat'); // TODO: 채팅 목록 경로로
+            if (roomId && stompConnectedRef.current) {
+              sendLeaveMessage(Number(roomId));
+              disconnectStomp();
+            }
+            navigate('/chat');
           }}
         />
         <div className={styles['header-title']}>

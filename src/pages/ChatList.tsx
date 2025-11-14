@@ -56,7 +56,8 @@ const Chat: React.FC = () => {
       try {
         const response = await axiosInstance.get('/api/auth/user/my-chatrooms');
         setApiChatList(response.data.data.content); 
-        console.log("response",response);
+        console.log("📋 내 채팅방 전체 응답:", response.data);
+        console.log("📋 채팅방 ID 목록:", response.data.data.content.map((c: ApiChatData) => c.chatRoomId));
         // ❗ 서버 응답 구조에 따라 .data.data 조정 필요 (ex. 바로 배열이면 .data)
       } catch (error) {
         console.error('채팅방 리스트 가져오기 실패:', error);
