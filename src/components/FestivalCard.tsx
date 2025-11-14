@@ -5,23 +5,19 @@ import axiosInstance from '../api/axiosInstance';
 interface FestivalCardProps {
   eventId: number;
   commentCount: number;
-  mainText: string;
-  subText: string;
   festivalName: string;
   dateRange: string;
   price: string;
   location: string;
   likedDefault?: boolean;
-  mainImg?: string; // ✅ 추가
-  rating: number;      // ⭐ 평점
+  mainImg?: string;
+  rating: number;
   likes: number;  
 }
 
 const FestivalCard = ({
   eventId,
   commentCount,
-  mainText,
-  subText,
   festivalName,
   dateRange,
   price,
@@ -30,7 +26,7 @@ const FestivalCard = ({
   mainImg,
   rating,
   likes,
-}: FestivalCardProps & { mainImg?: string }) => {
+}: FestivalCardProps) => {
   const [liked, setLiked] = useState(likedDefault);
   const navigate = useNavigate(); 
   const handleToggleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -56,11 +52,6 @@ const FestivalCard = ({
     <>
       <CardWrapper $background={mainImg} onClick={handleClick}>
         <CommentBadge>평점 {rating ? rating.toFixed(1) : '0.0'}</CommentBadge>
-
-        <ContentWrapper>
-          <MainText>{mainText}</MainText>
-          <SubText>{subText}</SubText>
-        </ContentWrapper>
 
         <HeartButton onClick={handleToggleLike}>
           <img
@@ -155,29 +146,6 @@ const CommentBadge = styled.div`
   border-radius: 36px;
   font-size: 16px;
   font-weight: 600;
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background: linear-gradient(to top, rgb(255 255 255 / 64%), rgb(255 255 255 / 37%));
-`;
-
-
-const MainText = styled.div`
-  color: black; /* 기존 rgb(0, 0, 0) → white */
-  font-weight: 600;
-  font-size: 24px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const SubText = styled.div`
-  color: black; /* 기존 0.5 → 더 선명하게 */
-  font-weight: 500;
-  font-size: 16px;
 `;
 
 const HeartButton = styled.button`
