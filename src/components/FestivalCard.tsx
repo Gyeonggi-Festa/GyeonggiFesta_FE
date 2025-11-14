@@ -55,7 +55,7 @@ const FestivalCard = ({
   return (
     <>
       <CardWrapper $background={mainImg} onClick={handleClick}>
-        <CommentBadge>평점 {rating.toFixed(1)}</CommentBadge>
+        <CommentBadge>평점 {rating ? rating.toFixed(1) : '0.0'}</CommentBadge>
 
         <ContentWrapper>
           <MainText>{mainText}</MainText>
@@ -86,7 +86,7 @@ const FestivalCard = ({
             <MetricsWrapper>
               <MetricItem>
                 <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
-                <span style={{ color: '#FFB200' }}>{rating.toFixed(1)}</span>
+                <span style={{ color: '#FFB200' }}>{rating ? rating.toFixed(1) : '0.0'}</span>
               </MetricItem>
               <MetricItem>
                 <img src="/assets/FestivalCard/heart-mini.svg" alt="좋아요" />
