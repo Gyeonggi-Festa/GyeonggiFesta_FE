@@ -30,7 +30,7 @@ const MyPage = () => {
         });
       } catch (err) {
         console.error('유저 정보 불러오기 실패', err);
-        
+
       }
     };
 
@@ -45,8 +45,7 @@ const MyPage = () => {
       transition={{ duration: 0.5 }}
     >
       <p className={styles.welcome}>
-        {nickname}님,
-        8 
+        {nickname}님, 
         <br />
         반갑습니다.
       </p>
