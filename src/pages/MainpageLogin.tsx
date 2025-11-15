@@ -28,6 +28,7 @@ interface Festival {
   rating?: number;      // ⭐ 평점 (optional - 없으면 랜덤 생성)
   likes: number;
   roadAddress?: string;  // 도로명 주소
+  liked?: boolean;  // liked 필드로 좋아요 상태 확인
 }
 
 const MainpageLogin = () => {
@@ -118,7 +119,7 @@ const MainpageLogin = () => {
             dateRange={`${festival.startDate} ~ ${festival.endDate}`}
             price={festival.isFree === '무료' ? '무료' : '유료'}
             location={festival.roadAddress || "주소 정보 없음"}
-            likedDefault={festival.favorites === 1 || festival.currentUserLike === true}
+            likedDefault={festival.liked === true}
             mainImg={festival.mainImg}
             rating={festival.rating && festival.rating > 0 ? festival.rating : 0} // rating이 0이면 표시하지 않음
             likes={festival.likes || 0}
