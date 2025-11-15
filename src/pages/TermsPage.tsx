@@ -69,12 +69,12 @@ const TermsPage: React.FC = () => {
 
         <h3 className={styles.sectionTitle}>문의 오픈 채팅</h3>
         <p>
-          <a href="https://open.kakao.com/o/sXpLyXuh" target="_blank" rel="noopener noreferrer">
-            https://open.kakao.com/o/sXpLyXuh
+          <a href="https://open.kakao.com/o/gOhxe11h" target="_blank" rel="noopener noreferrer">
+            https://open.kakao.com/o/gOhxe11h
           </a>
         </p>
 
-        <p className={styles.updateNote}>* 본 개인정보 처리방침은 2025년 5월 1일부터 적용됩니다.</p>
+        <p className={styles.updateNote}>* 본 개인정보 처리방침은 2025년 11월 16일부터 적용됩니다.</p>
       </div>
     </div>
   );

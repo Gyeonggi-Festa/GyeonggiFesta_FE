@@ -164,8 +164,8 @@ const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
             <p className={styles.contactInfo}>
               <strong>개인정보 처리 책임자:</strong> 오준석<br />
               <strong>문의 오픈 채팅:</strong>{' '}
-              <a href="https://open.kakao.com/o/sXpLyXuh" target="_blank" rel="noopener noreferrer">
-                https://open.kakao.com/o/sXpLyXuh
+              <a href="https://open.kakao.com/o/gOhxe11h" target="_blank" rel="noopener noreferrer">
+                https://open.kakao.com/o/gOhxe11h
               </a>
             </p>
           </div>
