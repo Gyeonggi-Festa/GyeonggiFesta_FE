@@ -107,7 +107,7 @@ const MainpageLogin = () => {
       <UpcomingEvents onDateSelect={setSelectedDate} />
 
       {festivals.map((festival, index) => (
-        <FestivalCardWrapper key={festival.eventId || index}>
+        <FestivalCardWrapper key={`festival-${festival.eventId}-${index}`}>
           <FestivalCard
             eventId={festival.eventId}
             commentCount={festival.comments}
