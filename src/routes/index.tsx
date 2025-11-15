@@ -12,6 +12,7 @@ import BackgroundLayout from '../Layout/BackgroundLayout'
 import PopularPage from '../pages/PopularPage'
 import AIRecommendPage from '../pages/AIRecommendPage'
 import ScrapEventsPage from '../pages/ScrapEventsPage'
+import MyReviewPage from '../pages/MyReviewPage'
 import TermsPage from '../pages/TermsPage'
 import DeleteAccountPage from '../pages/DeleteAccountPage'
 import AuthRedirect from '../pages/AuthRedirect'
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
   { path: '/chat', element: <Chat /> },
     { path: '/chat/create-group', element: <CreateGroupChat /> },
   { path: '/mypage', element: <MyPage /> },
+  { path: '/myreview', element: <MyReviewPage /> },
   { path: '/mainpage', element: <MainpageLogin /> },
   { path: '/ai', element: <AIRecommendPage /> },
   { path: '/popular', element: <PopularPage /> },
