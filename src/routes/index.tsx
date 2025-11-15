@@ -4,6 +4,7 @@ import CreateGroupChat from '../pages/CreateGroupChat'
 import RegisterPage from '../pages/RegisterPage'
 import MainpageLogin from '../pages/MainpageLogin'
 import MyPage from '../pages/MyPage'
+import ParkingMap from '../pages/ParkingMap'
 import Chat from '../pages/ChatList'
 import ChatRoom from '../pages/ChatRoom'
 import ReviewWritePage from '../pages/ReviewWritePage'
@@ -43,6 +44,7 @@ export const router = createBrowserRouter([
   { path: '/ai', element: <AIRecommendPage /> },
   { path: '/popular', element: <PopularPage /> },
   { path: '/fest/detail', element: <FestivalDetail /> },
+  { path: '/map', element: <ParkingMap /> },
   { path: '/fest/detail/review/write', element: <ReviewWritePage /> },
     { path: '/chat/room/:roomId', element: <ChatRoom /> },
     { path: '/login-success', element: <AuthRedirect /> },
