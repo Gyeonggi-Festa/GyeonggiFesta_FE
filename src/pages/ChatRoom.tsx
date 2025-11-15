@@ -24,7 +24,9 @@ interface ChatMessageData {
 }
 interface RawMessage {
   messageId: number;
-  senderVerifyId: string;
+  senderVerifyId?: string;
+  senderId?: number;
+  memberId?: number;
   content: string;
   createdAt: string;
 }
@@ -60,7 +62,7 @@ const ChatRoom: React.FC = () => {
   const { roomTitle, participantCount } = location.state || {};
   const [isOwner, setIsOwner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
-  const [verifyId, setVerifyId] = useState<string>(''); // verifyId 상태 추가
+  const [myMemberId, setMyMemberId] = useState<number | null>(null); // 내 memberId 상태
   
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -69,9 +71,10 @@ const ChatRoom: React.FC = () => {
         return;
       }
       
-      // verifyId는 localStorage에서 가져오기
-      const storedVerifyId = localStorage.getItem('verify_id') || '';
-      setVerifyId(storedVerifyId);
+      // memberId는 localStorage에서 가져오기
+      const storedMemberId = localStorage.getItem('member_id');
+      const myMemberIdNum = storedMemberId ? Number(storedMemberId) : null;
+      setMyMemberId(myMemberIdNum);
       
       // memberInfo API는 선택적으로 호출 (실패해도 계속 진행)
       try {
@@ -86,9 +89,9 @@ const ChatRoom: React.FC = () => {
           const currentUserInfo = members[0];
           
           if (currentUserInfo) {
-            if (currentUserInfo.verifyId) {
-              setVerifyId(currentUserInfo.verifyId);
-              localStorage.setItem('verify_id', currentUserInfo.verifyId);
+            if (currentUserInfo.memberId) {
+              setMyMemberId(currentUserInfo.memberId);
+              localStorage.setItem('member_id', String(currentUserInfo.memberId));
             }
             if (currentUserInfo.role) {
               setIsOwner(currentUserInfo.role === 'OWNER');
@@ -100,14 +103,14 @@ const ChatRoom: React.FC = () => {
         // 404나 다른 에러가 발생해도 계속 진행
       }
       
-      // verifyId가 있으면 메시지와 소켓 설정
-      const finalVerifyId = storedVerifyId || localStorage.getItem('verify_id') || '';
-      if (finalVerifyId) {
-        await fetchMessages(finalVerifyId);
-        await setupWebSocket(finalVerifyId);
+      // memberId가 있으면 메시지와 소켓 설정
+      const finalMemberId = myMemberIdNum || (localStorage.getItem('member_id') ? Number(localStorage.getItem('member_id')) : null);
+      if (finalMemberId) {
+        await fetchMessages(finalMemberId);
+        await setupWebSocket(finalMemberId);
       } else {
-        // verifyId가 없어도 소켓 연결은 시도 (로그인 없이 접근 가능하도록)
-        await setupWebSocket('');
+        // memberId가 없어도 소켓 연결은 시도 (로그인 없이 접근 가능하도록)
+        await setupWebSocket(null);
       }
     };
     
@@ -126,7 +129,7 @@ const ChatRoom: React.FC = () => {
     };
   }, [roomId]);
 
-  const fetchMessages = async (verifyId: string) => {
+  const fetchMessages = async (memberId: number | null) => {
     try {
       const response = await axiosInstance.get<{ data: { content: RawMessage[] } }>(
         `/api/auth/user/chat/rooms/${roomId}/messages`
@@ -134,15 +137,22 @@ const ChatRoom: React.FC = () => {
     
       const sortedMessages: ChatMessageData[] = response.data.data.content
         .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-        .map((msg) => ({
-          id: msg.messageId,
-          sender: msg.senderVerifyId === verifyId ? 'me' : 'other', // 수정: 본인 메시지는 'me'
-          message: msg.content,
-          time: new Date(msg.createdAt).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        }));
+        .map((msg) => {
+          // memberId로 본인 메시지 판별
+          const isMyMessage = memberId !== null && (
+            msg.memberId === memberId || 
+            msg.senderId === memberId
+          );
+          return {
+            id: msg.messageId,
+            sender: isMyMessage ? 'me' : 'other',
+            message: msg.content,
+            time: new Date(msg.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          };
+        });
     
       setMessages(sortedMessages);
     } catch (error) {
@@ -150,7 +160,7 @@ const ChatRoom: React.FC = () => {
     }
   };
   
-  const setupWebSocket = async (verifyId: string) => {
+  const setupWebSocket = async (memberId: number | null) => {
     if (!roomId) return;
     
     try {
@@ -161,6 +171,10 @@ const ChatRoom: React.FC = () => {
       await connectStomp();
       stompConnectedRef.current = true; // STOMP 연결 완료 표시
       console.log('✅ STOMP 연결 완료');
+      console.log('🔍 현재 사용자 정보:', {
+        memberId: memberId || localStorage.getItem('member_id'),
+        roomId: roomId,
+      });
       
       // 2. 채팅방 입장 소켓 메시지 전송
       sendEnterMessage(Number(roomId));
@@ -210,10 +224,21 @@ const ChatRoom: React.FC = () => {
           displayContent = `[파일: ${body.content}]`;
         }
         
-        // verifyId나 senderName으로 본인 메시지 판별
-        const isMyMessage = body.senderVerifyId 
-          ? body.senderVerifyId === verifyId 
-          : body.senderName === localStorage.getItem('username');
+        // memberId로 본인 메시지 판별
+        const storedMemberId = memberId || (localStorage.getItem('member_id') ? Number(localStorage.getItem('member_id')) : null);
+        const isMyMessage = storedMemberId !== null && (
+          body.memberId === storedMemberId ||
+          body.senderId === storedMemberId
+        );
+        
+        console.log('💬 메시지 발신자 정보:', {
+          senderId: body.senderId,
+          memberId: body.memberId,
+          senderVerifyId: body.senderVerifyId,
+          senderName: body.senderName,
+          myMemberId: storedMemberId,
+          isMyMessage: isMyMessage,
+        });
         
         setMessages((prev) => [
           ...prev,

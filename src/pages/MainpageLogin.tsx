@@ -34,27 +34,50 @@ const MainpageLogin = () => {
   const [festivals, setFestivals] = useState<Festival[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const loadFestivals = useCallback(async () => {
+  const loadFestivals = useCallback(async (date: Date, pageNum: number = 1, append: boolean = false) => {
     try {
-      const today = formatDate(new Date());
+      const dateStr = formatDate(date);
+      console.log('📅 날짜 선택으로 API 호출:', dateStr);
       const response = await axiosInstance.get('/api/auth/user/event', {
-        params: { startDate: today, endDate: today, page, size: 5 },
+        params: { startDate: dateStr, endDate: dateStr, page: pageNum, size: 5 },
       });
       const newEvents = response.data.data.content;
       
-      console.log("pl",newEvents);
-      setFestivals(prev => [...prev, ...newEvents]);
-      if (newEvents.length < 5) setHasMore(false);
+      console.log('📅 API 응답 데이터:', newEvents);
+      
+      if (append) {
+        setFestivals(prev => [...prev, ...newEvents]);
+      } else {
+        setFestivals(newEvents);
+        setPage(1);
+      }
+      
+      if (newEvents.length < 5) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
     } catch (error) {
       console.error('행사 불러오기 실패:', error);
     }
-  }, [page]);
+  }, []);
 
+  // 날짜가 변경되면 API 호출
   useEffect(() => {
-    loadFestivals();
-  }, [loadFestivals]);
+    setPage(1);
+    setHasMore(true);
+    loadFestivals(selectedDate, 1, false);
+  }, [selectedDate, loadFestivals]);
+
+  // 페이지가 변경되면 추가 데이터 로드 (같은 날짜)
+  useEffect(() => {
+    if (page > 1) {
+      loadFestivals(selectedDate, page, true);
+    }
+  }, [page, selectedDate, loadFestivals]);
 
   useEffect(() => {
     if (!hasMore) return;
@@ -81,7 +104,7 @@ const MainpageLogin = () => {
         </ButtonGroup>
       </MainTopCardWrapper>
 
-      <UpcomingEvents />
+      <UpcomingEvents onDateSelect={setSelectedDate} />
 
       {festivals.map((festival, index) => (
         <FestivalCardWrapper key={festival.eventId || index}>

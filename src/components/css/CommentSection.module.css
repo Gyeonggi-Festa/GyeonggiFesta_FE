@@ -96,15 +96,23 @@
   padding-left: 10px;
   border-left: 2px solid #eee;
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .replyItem {
-  margin-bottom: 8px;
+  margin-bottom: 0;
+  padding: 8px 12px;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  border-left: 3px solid #ddd;
 }
 
 .replyText {
   font-size: 14px;
   color: #444;
+  line-height: 1.4;
 }
 
 .toggleRepliesBtn {

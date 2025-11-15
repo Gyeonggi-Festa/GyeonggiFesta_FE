@@ -35,19 +35,26 @@ const AuthRedirect = () => {
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
 
-        // 3. verifyId 가져오기
+        // 3. 사용자 정보 가져오기 (verifyId, memberId)
         try {
           const userInfoResponse = await axiosInstance.get('/api/auth/user/info');
-          const { verifyId } = userInfoResponse.data.data;
+          const { verifyId, memberId } = userInfoResponse.data.data;
           
           if (verifyId) {
             localStorage.setItem('verify_id', verifyId);
           } else {
             console.warn('verifyId를 받지 못했습니다.');
           }
+          
+          if (memberId) {
+            localStorage.setItem('member_id', String(memberId));
+            console.log('✅ memberId 저장됨:', memberId);
+          } else {
+            console.warn('memberId를 받지 못했습니다.');
+          }
         } catch (infoError: any) {
           console.error('사용자 정보 가져오기 실패:', infoError);
-          // verifyId를 가져오지 못해도 로그인은 진행
+          // 사용자 정보를 가져오지 못해도 로그인은 진행
         }
 
         // 4. 역할에 따라 이동

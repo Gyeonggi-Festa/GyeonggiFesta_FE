@@ -9,9 +9,9 @@ interface Comment {
   content: string;
   createdAt: string;
   memberId: number;
-  verifyId: string;
+  verifyId?: string; // optional로 변경 (응답에 없을 수 있음)
   replies: Comment[];
-  username: string;
+  username?: string; // optional로 변경 (응답에 없을 수 있음)
 }
 
 interface CommentSectionProps {
@@ -27,7 +27,7 @@ export default function CommentSection({ eventId }: CommentSectionProps) {
   const [targetCommentId, setTargetCommentId] = useState<number | null>(null);
   const [openReplies, setOpenReplies] = useState<Record<number, boolean>>({});
   const [visibleCount, setVisibleCount] = useState(3);
-  const myVerifyId = localStorage.getItem('verify_id'); // ✅ 현재 로그인한 사용자 ID
+  const myMemberId = localStorage.getItem('member_id') ? Number(localStorage.getItem('member_id')) : null; // ✅ 현재 로그인한 사용자 memberId
 
 
   const fetchComments = async () => {
@@ -128,14 +128,14 @@ export default function CommentSection({ eventId }: CommentSectionProps) {
               </div>
               <div className={styles.metaRight}>
                 <span className={styles.time}>· {formatDate(comment.createdAt)}</span>
-                <span className={styles.writer}>· {comment.username}</span>
+                {comment.username && <span className={styles.writer}>· {comment.username}</span>}
                 
-                {comment.verifyId !== myVerifyId && (
+                {comment.memberId !== myMemberId && comment.verifyId && (
                   <button
                     className={styles.chatButton}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStartChat(comment.username, comment.verifyId);
+                      handleStartChat(comment.username || '사용자', comment.verifyId);
                     }}
                   >
                     채팅하기
@@ -162,10 +162,6 @@ export default function CommentSection({ eventId }: CommentSectionProps) {
                 {comment.replies.map((reply) => (
                   <div key={reply.commentId} className={styles.replyItem}>
                     <div className={styles.replyText}>{reply.content}</div>
-                    <div className={styles.metaRight}>
-                      <span className={styles.time}>· {formatDate(reply.createdAt)}</span>
-                      <span className={styles.writer}>· {reply.username}</span>
-                    </div>
                   </div>
                 ))}
               </div>

@@ -22,7 +22,11 @@ interface EventType {
 const formatDate = (date: Date): string =>
   date.toISOString().split('T')[0];
 
-const UpcomingEvents: React.FC = () => {
+interface UpcomingEventsProps {
+  onDateSelect?: (date: Date) => void;
+}
+
+const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ onDateSelect }) => {
   const today = useMemo(() => new Date(), []);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(today);
@@ -61,10 +65,14 @@ const UpcomingEvents: React.FC = () => {
     [filteredEvents, visibleCount]
   );
 
-  const onDateSelect = useCallback((date: Date) => {
+  const handleDateSelect = useCallback((date: Date) => {
     setSelectedDate(date);
     setVisibleCount(3);
-  }, []);
+    // 부모 컴포넌트에 날짜 변경 알림
+    if (onDateSelect) {
+      onDateSelect(date);
+    }
+  }, [onDateSelect]);
 
   const handleEventClick = useCallback(
     (eventId: number) => {
@@ -92,7 +100,7 @@ const UpcomingEvents: React.FC = () => {
           return (
             <DateButton
               key={date.toDateString()}
-              onClick={() => onDateSelect(date)}
+              onClick={() => handleDateSelect(date)}
               selected={isSelected}
             >
               <DayLabel>{DAYS_KR[date.getDay()]}</DayLabel>
