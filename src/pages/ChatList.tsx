@@ -90,10 +90,11 @@ const Chat: React.FC = () => {
   ? apiChatList.map(chat => {
       let mode: 'my' | 'unread' | 'group';
 
-      if (chat.type === "GROUP") {
-        mode = 'group';
-      } else if (chat.notReadMessageCount > 0) {
+      // notReadMessageCount가 1 이상이면 무조건 안 읽은 채팅방으로 분류
+      if (chat.notReadMessageCount >= 1) {
         mode = 'unread';
+      } else if (chat.type === "GROUP") {
+        mode = 'group';
       } else {
         mode = 'my';
       }
@@ -104,7 +105,7 @@ const Chat: React.FC = () => {
         participation: chat.participation,
         message: chat.lastMessageText || "메시지 없음",
         time: chat.lastMessageTime,
-        hasNotification: chat.notReadMessageCount > 0,
+        hasNotification: chat.notReadMessageCount >= 1,
         mode,
       };
     })
@@ -120,10 +121,11 @@ const Chat: React.FC = () => {
   const postRooms = apiChatList.filter((room) => room.createdFrom === 'POST');
   const companionChatData: ChatData[] = postRooms.map(chat => {
     let mode: 'my' | 'unread' | 'group';
-    if (chat.type === "GROUP") {
-      mode = 'group';
-    } else if (chat.notReadMessageCount > 0) {
+    // notReadMessageCount가 1 이상이면 무조건 안 읽은 채팅방으로 분류
+    if (chat.notReadMessageCount >= 1) {
       mode = 'unread';
+    } else if (chat.type === "GROUP") {
+      mode = 'group';
     } else {
       mode = 'my';
     }
@@ -133,13 +135,13 @@ const Chat: React.FC = () => {
       participation: chat.participation,
       message: chat.lastMessageText || "메시지 없음",
       time: chat.lastMessageTime,
-      hasNotification: chat.notReadMessageCount > 0,
+      hasNotification: chat.notReadMessageCount >= 1,
       mode,
     };
   });
 
   const filteredChats = selectedMode === 'my'
-    ? chatData.filter(chat => chat.mode === 'my' || chat.mode === 'unread' || chat.mode === 'group')
+    ? chatData.filter(chat => chat.mode === 'my' || chat.mode === 'group') // 안 읽은 채팅방 제외
     : selectedMode === 'companion'
     ? companionChatData
     : chatData.filter(chat => chat.mode === selectedMode);
@@ -233,7 +235,7 @@ const Chat: React.FC = () => {
           )}
 
           <div className={styles["group-category-list"]}>
-            {['전체', ...categories].map(cat => (
+            {categories.map(cat => (
               <button
                 key={cat}
                 className={`${styles["category-button"]} ${selectedCategory === cat ? styles["selected"] : ''}`}

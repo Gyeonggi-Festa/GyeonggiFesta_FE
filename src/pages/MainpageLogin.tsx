@@ -23,7 +23,8 @@ interface Festival {
   startDate: string;
   endDate: string;
   isFree: string;
-  currentUserLike: boolean;
+  currentUserLike?: boolean;
+  favorites?: number;  // favorites가 1이면 좋아요가 칠해짐
   mainImg?: string;
   rating?: number;      // ⭐ 평점 (optional - 없으면 랜덤 생성)
   likes: number;  
@@ -117,7 +118,7 @@ const MainpageLogin = () => {
             dateRange={`${festival.startDate} ~ ${festival.endDate}`}
             price={festival.isFree === '무료' ? '무료' : '유료'}
             location={festival.isFree === "Y" ? "무료" : "유료"}
-            likedDefault={festival.currentUserLike}
+            likedDefault={festival.favorites === 1 || festival.currentUserLike === true}
             mainImg={festival.mainImg}
             rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)
             likes={festival.likes || 0}

@@ -6,12 +6,12 @@
   }
   
   .chatroom-my-message {
-    justify-content: flex-start;
+    justify-content: flex-end;
+    align-items: flex-end;
   }
   
   .chatroom-other-message {
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: flex-start;
   }
   
   .chatroom-message-wrapper {
@@ -22,11 +22,11 @@
   }
   
   .chatroom-my-message .chatroom-message-wrapper {
-    align-items: flex-start;
+    align-items: flex-end;
   }
   
   .chatroom-other-message .chatroom-message-wrapper {
-    align-items: flex-end;
+    align-items: flex-start;
   }
   .chatroom-message-bubble {
     border-radius: 16px;
@@ -58,10 +58,10 @@
 }
   
   .chatroom-my-message .chatroom-message-time {
-    right: -35px;
+    left: -35px;
   }
   
   .chatroom-other-message .chatroom-message-time {
-    left: -35px;
+    right: -35px;
   }
   

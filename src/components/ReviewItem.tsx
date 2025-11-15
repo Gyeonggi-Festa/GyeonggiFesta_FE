@@ -9,10 +9,11 @@ interface ReviewItemProps {
   content: string;
   mediaList?: { imageUrl: string }[];
   onDelete?: () => void; // ✅ 삭제 후 목록 갱신 등 외부 처리
-  reviewAuthorVerifyId: string; 
+  reviewAuthorVerifyId: string;
+  rating?: number; // 별점 추가
 }
 
-export default function ReviewItem({ reviewId, name, visitDate, content, mediaList = [], onDelete,reviewAuthorVerifyId }: ReviewItemProps) {
+export default function ReviewItem({ reviewId, name, visitDate, content, mediaList = [], onDelete, reviewAuthorVerifyId, rating = 0 }: ReviewItemProps) {
   const hasImage = mediaList.length > 0;
   const imageUrl = hasImage ? mediaList[0].imageUrl : null;
   
@@ -23,8 +24,16 @@ export default function ReviewItem({ reviewId, name, visitDate, content, mediaLi
   return (
     <div className={styles.item}>
       <div className={styles.topInfo}>
-        <span className={styles.name}>{name}</span>
-        <span className={styles.meta}>{visitDate}</span>
+        <div className={styles.leftInfo}>
+          <span className={styles.name}>{name}</span>
+          <span className={styles.meta}>{visitDate}</span>
+          {rating > 0 && (
+            <div className={styles.rating}>
+              <img src="/assets/star-fill.svg" alt="별점" className={styles.starIcon} />
+              <span className={styles.ratingValue}>{rating.toFixed(1)}</span>
+            </div>
+          )}
+        </div>
         {isAuthor && (
           <button
             className={styles.deleteBtn}
@@ -45,7 +54,6 @@ export default function ReviewItem({ reviewId, name, visitDate, content, mediaLi
             삭제
           </button>
         )}
-
       </div>
 
       <div className={styles.row}>

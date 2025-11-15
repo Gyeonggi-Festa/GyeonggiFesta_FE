@@ -60,9 +60,8 @@ const ChatRoom: React.FC = () => {
   const location = useLocation();
 
   const { roomTitle, participantCount } = location.state || {};
-  const [isOwner, setIsOwner] = useState(false);
+  const [isOwner] = useState(false); // memberInfo API를 호출하지 않으므로 기본값 false
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
-  const [myMemberId, setMyMemberId] = useState<number | null>(null); // 내 memberId 상태
   
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -73,38 +72,7 @@ const ChatRoom: React.FC = () => {
       
       // memberId는 localStorage에서 가져오기
       const storedMemberId = localStorage.getItem('member_id');
-      const myMemberIdNum = storedMemberId ? Number(storedMemberId) : null;
-      setMyMemberId(myMemberIdNum);
-      
-      // memberInfo API는 선택적으로 호출 (실패해도 계속 진행)
-      try {
-        console.log(`채팅방 멤버 정보 요청: roomId=${roomId}`);
-        const response = await axiosInstance.get(`/api/auth/user/chatrooms/${roomId}/memberInfo`);
-        console.log('멤버 정보 응답:', response.data);
-        
-        const members = response.data.data;
-        
-        if (members && members.length > 0) {
-          // 현재 사용자의 정보 찾기 (배열의 첫 번째 요소가 현재 사용자)
-          const currentUserInfo = members[0];
-          
-          if (currentUserInfo) {
-            if (currentUserInfo.memberId) {
-              setMyMemberId(currentUserInfo.memberId);
-              localStorage.setItem('member_id', String(currentUserInfo.memberId));
-            }
-            if (currentUserInfo.role) {
-              setIsOwner(currentUserInfo.role === 'OWNER');
-            }
-          }
-        }
-      } catch (error: any) {
-        console.warn('멤버 정보 가져오기 실패 (계속 진행):', error);
-        // 404나 다른 에러가 발생해도 계속 진행
-      }
-      
-      // memberId가 있으면 메시지와 소켓 설정
-      const finalMemberId = myMemberIdNum || (localStorage.getItem('member_id') ? Number(localStorage.getItem('member_id')) : null);
+      const finalMemberId = storedMemberId ? Number(storedMemberId) : null;
       if (finalMemberId) {
         await fetchMessages(finalMemberId);
         await setupWebSocket(finalMemberId);
@@ -178,17 +146,9 @@ const ChatRoom: React.FC = () => {
       
       // 2. 채팅방 입장 소켓 메시지 전송
       sendEnterMessage(Number(roomId));
+      console.log('📤 /app/chat/room/' + roomId + '/enter 메시지 전송 완료');
       
-      // 3. 채팅방 join API 호출 (토큰만 보내면 됨)
-      try {
-        await axiosInstance.post(`/api/auth/user/chatrooms/${roomId}/join`);
-        console.log('✅ 채팅방 입장 완료');
-      } catch (joinError: any) {
-        console.error('채팅방 입장 실패:', joinError);
-        // join 실패해도 소켓 연결은 유지
-      }
-      
-      // 4. 채팅방 입장 시 읽음 처리
+      // 3. 채팅방 입장 시 읽음 처리
       setTimeout(() => {
         sendReadMessage(Number(roomId));
       }, 500);
@@ -199,7 +159,20 @@ const ChatRoom: React.FC = () => {
         
         // 입장/퇴장 이벤트 처리
         if (body.eventType === 'JOIN') {
-          console.log(`👋 ${body.memberName}님이 입장했습니다.`);
+          console.log('🚪 ===== 채팅방 입장 응답 데이터 =====');
+          console.log('🚪 전체 응답:', JSON.stringify(body, null, 2));
+          console.log('🚪 상세 정보:', {
+            chatRoomId: body.chatRoomId,
+            memberId: body.memberId,
+            memberName: body.memberName,
+            senderId: body.senderId,
+            senderName: body.senderName,
+            eventType: body.eventType,
+            timestamp: body.timestamp,
+            createdAt: body.createdAt,
+          });
+          console.log(`👋 ${body.memberName || '사용자'}님이 입장했습니다.`);
+          console.log('🚪 ====================================');
           // 필요시 UI에 입장 메시지 표시
           return;
         }

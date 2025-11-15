@@ -369,7 +369,7 @@ const MeetingPotWritePage: React.FC = () => {
         </div>
 
         <label className={styles.label}>
-          선호 성별
+          선호 성별 <span className={styles.optional}>(선택)</span>
         </label>
         <div className={styles.genderWrap}>
           <button
@@ -393,7 +393,7 @@ const MeetingPotWritePage: React.FC = () => {
         </div>
 
         <label className={styles.label}>
-          선호 연령
+          선호 연령 <span className={styles.optional}>(선택)</span>
         </label>
         <div className={styles.ageWrap}>
           <div className={styles.ageInputGroup}>

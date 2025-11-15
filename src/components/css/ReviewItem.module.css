@@ -7,7 +7,14 @@
 .topInfo {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 4px;
+}
+
+.leftInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .name {
@@ -20,7 +27,23 @@
   font-size: 12px;
   font-weight: 500;
   color: #888888;
-  margin-left: 10px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.ratingValue {
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFB200;
 }
 
 .row {

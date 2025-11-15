@@ -13,10 +13,11 @@ interface ReviewData {
   eventId: number;
   memberName: string;
   content: string;
-  visitedAt: string;
+  visitedAt?: string;
+  createdAt?: string;
   rating: number;
   mediaList?: { imageUrl: string }[];
-  verifyId:string;
+  verifyId?: string;
 }
 
 export default function ReviewSection({ eventId }: ReviewSectionProps) {
@@ -74,14 +75,15 @@ export default function ReviewSection({ eventId }: ReviewSectionProps) {
           key={review.id}
           reviewId={review.id}
           name={review.memberName}
-          visitDate={new Date(review.visitedAt).toLocaleDateString("ko-KR")}
+          visitDate={review.visitedAt ? new Date(review.visitedAt).toLocaleDateString("ko-KR") : (review.createdAt ? new Date(review.createdAt).toLocaleDateString("ko-KR") : "")}
           content={review.content}
           mediaList={review.mediaList}
           onDelete={() => {
             setReviews((prev) => prev.filter((r) => r.id !== review.id));
             setTotalReviews((prev) => prev - 1);
           }}
-          reviewAuthorVerifyId={review.verifyId}
+          reviewAuthorVerifyId={review.verifyId || ""}
+          rating={review.rating}
         />
         ))}
       </div>

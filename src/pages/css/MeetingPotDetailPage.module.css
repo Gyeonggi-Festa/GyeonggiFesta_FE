@@ -207,3 +207,43 @@
   font-weight: 500;
 }
 
+.chatButtonSection {
+  margin-top: 24px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chatButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: linear-gradient(135deg, #487CEC, #345baa);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chatButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(72, 124, 236, 0.4);
+}
+
+.chatButton:active {
+  transform: translateY(0);
+}
+
+.chatButton img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+

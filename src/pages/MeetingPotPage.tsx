@@ -60,6 +60,13 @@ const formatAge = (minAge: number | null, maxAge: number | null): string => {
   return '연령 무관';
 };
 
+interface ChatRoom {
+  chatRoomId: number;
+  name: string;
+  createdFrom: string | null;
+  createdFromId: number | null;
+}
+
 const MeetingPotPage: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
