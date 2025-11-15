@@ -60,7 +60,7 @@ const ChatRoom: React.FC = () => {
   const location = useLocation();
 
   const { roomTitle, participantCount } = location.state || {};
-  const [isOwner] = useState(false); // memberInfo API를 호출하지 않으므로 기본값 false
+  const [isOwner, setIsOwner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
   
   useEffect(() => {
@@ -68,6 +68,17 @@ const ChatRoom: React.FC = () => {
       if (!roomId) {
         console.error('roomId가 없습니다.');
         return;
+      }
+      
+      // 방장 여부 확인
+      try {
+        const ownerRes = await axiosInstance.get(`/api/auth/user/chatrooms/${roomId}/owner`);
+        const isOwnerValue = ownerRes.data.data === true;
+        setIsOwner(isOwnerValue);
+        console.log('방장 여부:', isOwnerValue);
+      } catch (error) {
+        console.error('방장 여부 확인 실패:', error);
+        setIsOwner(false);
       }
       
       // memberId는 localStorage에서 가져오기
@@ -367,38 +378,46 @@ const ChatRoom: React.FC = () => {
         </div>
       </div>
       {menuOpen && (
-  <div className={styles['menu-popup']}>
-    {isOwner ? (
-          <button
-            onClick={async () => {
-              try {
-                await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}`);
-                alert('채팅방이 삭제되었습니다.');
-                navigate('/chat');
-              } catch (err) {
-                console.error('채팅방 삭제 실패:', err);
-              }
-            }}
-          >
-            채팅방 삭제
-          </button>
-        ) : (
-          <button
-            onClick={async () => {
-              try {
-                await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}/exit`);
-                alert('채팅방에서 나갔습니다.');
-                navigate('/chat');
-              } catch (err) {
-                console.error('채팅방 나가기 실패:', err);
-              }
-            }}
-          >
-            채팅방 나가기
-          </button>
-        )}
-      </div>
-    )}
+        <div className={styles['menu-popup']}>
+          {isOwner ? (
+            <button
+              onClick={async () => {
+                if (window.confirm('정말 채팅방을 삭제하시겠습니까?')) {
+                  try {
+                    await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}`);
+                    alert('채팅방이 삭제되었습니다.');
+                    navigate('/chat');
+                  } catch (err: any) {
+                    console.error('채팅방 삭제 실패:', err);
+                    const errorMessage = err.response?.data?.message || '채팅방 삭제에 실패했습니다.';
+                    alert(errorMessage);
+                  }
+                }
+              }}
+            >
+              채팅방 삭제
+            </button>
+          ) : (
+            <button
+              onClick={async () => {
+                if (window.confirm('정말 채팅방에서 나가시겠습니까?')) {
+                  try {
+                    await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}/exit`);
+                    alert('채팅방에서 나갔습니다.');
+                    navigate('/chat');
+                  } catch (err: any) {
+                    console.error('채팅방 나가기 실패:', err);
+                    const errorMessage = err.response?.data?.message || '채팅방 나가기에 실패했습니다.';
+                    alert(errorMessage);
+                  }
+                }
+              }}
+            >
+              채팅방 나가기
+            </button>
+          )}
+        </div>
+      )}
     </div>
     
   );

@@ -1,0 +1,61 @@
+.container {
+  padding: 0px 20px;
+  padding-bottom: 120px;
+}
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eee;
+  margin: 0 -20px;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.icon {
+  position: absolute;
+  left: 20px;
+  width: 6px;
+  height: 12px;
+  margin-left: 6px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  text-align: center;
+  z-index: 1;
+}
+
+.sectionLabel {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading,
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  font-size: 16px;
+  color: #888;
+  min-height: 50vh;
+}
+

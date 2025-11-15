@@ -13,6 +13,7 @@ import BackgroundLayout from '../Layout/BackgroundLayout'
 import PopularPage from '../pages/PopularPage'
 import AIRecommendPage from '../pages/AIRecommendPage'
 import ScrapEventsPage from '../pages/ScrapEventsPage'
+import LikedEventsPage from '../pages/LikedEventsPage'
 import MyReviewPage from '../pages/MyReviewPage'
 import TermsPage from '../pages/TermsPage'
 import DeleteAccountPage from '../pages/DeleteAccountPage'
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
     { path: '/fest/all', element: <FestivalAllPage /> },
     { path: '/profile', element: <EditProfilePage /> },
     { path: '/scrap', element: <ScrapEventsPage /> },
+    { path: '/liked', element: <LikedEventsPage /> },
     { path: '/term', element: <TermsPage /> },
     { path: '/register', element: <RegisterPage /> },
     { path: '/delete', element: <DeleteAccountPage /> },

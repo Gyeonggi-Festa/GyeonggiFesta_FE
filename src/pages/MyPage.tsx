@@ -86,6 +86,16 @@ const MyPage = () => {
           className={styles.item}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
+          onClick={() => navigate('/liked')}
+        >
+          <span>좋아요한 행사</span>
+          <img src="/assets/detail/slash.svg" alt="arrow" />
+        </motion.div>
+
+        <motion.div
+          className={styles.item}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
           onClick={() => navigate('/myreview')}
         >
           <span>내가 쓴 리뷰</span>
