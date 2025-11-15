@@ -70,11 +70,26 @@ const MeetingPotPage: React.FC = () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get('/api/auth/user/posts');
-        const content = res.data.data?.content ?? [];
+        console.log('전체 API 응답:', res.data);
+        
+        // API 응답 구조에 따라 데이터 추출
+        let content: Post[] = [];
+        if (res.data?.data?.content) {
+          // { code, status, data: { content: [...] } } 형식
+          content = res.data.data.content;
+        } else if (res.data?.content) {
+          // { content: [...] } 형식
+          content = res.data.content;
+        } else if (Array.isArray(res.data)) {
+          // 직접 배열 형식
+          content = res.data;
+        }
+        
+        console.log('추출된 게시글 목록:', content);
         setPosts(content);
-        console.log('게시글 목록:', content);
       } catch (error) {
         console.error('게시글 목록 불러오기 실패:', error);
+        setPosts([]);
       } finally {
         setLoading(false);
       }

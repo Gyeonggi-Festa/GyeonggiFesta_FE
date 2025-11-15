@@ -5,10 +5,8 @@ import styles from './css/MeetingPotWritePage.module.css';
 import CalendarModal from '../components/CalendarModal';
 import "react-calendar/dist/Calendar.css";
 
-const MAX_NAME_LENGTH = 50;
-const MAX_DESC_LENGTH = 500;
-
-const categoryList = ['전체', '교육', '행사', '전시', '공연'];
+const MAX_TITLE_LENGTH = 100;
+const MAX_CONTENT_LENGTH = 500;
 
 interface Event {
   eventId: number;
@@ -21,10 +19,14 @@ interface Event {
 
 const MeetingPotWritePage: React.FC = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [information, setInformation] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [eventDate, setEventDate] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [visitDates, setVisitDates] = useState<string[]>([]);
+  const [recruitmentTotal, setRecruitmentTotal] = useState<number>(1);
+  const [recruitmentPeriodDays, setRecruitmentPeriodDays] = useState<number>(7);
+  const [preferredGender, setPreferredGender] = useState<'ANY' | 'MALE' | 'FEMALE'>('ANY');
+  const [preferredMinAge, setPreferredMinAge] = useState<number | null>(null);
+  const [preferredMaxAge, setPreferredMaxAge] = useState<number | null>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -49,20 +51,34 @@ const MeetingPotWritePage: React.FC = () => {
     return selectedDate >= today;
   };
 
-  // 날짜 선택 핸들러
+  // 날짜 포맷팅 (yyyy-MM-dd -> yyyy.MM.dd)
+  const formatDateDisplay = (dateStr: string): string => {
+    return dateStr.replace(/-/g, '.');
+  };
+
+  // 날짜 선택 핸들러 (여러 날짜 선택 가능)
   const handleDateChange = (value: Date) => {
     const yyyy = value.getFullYear();
     const mm = String(value.getMonth() + 1).padStart(2, '0');
     const dd = String(value.getDate()).padStart(2, '0');
     const dateStr = `${yyyy}-${mm}-${dd}`;
     
-    if (isValidDate(dateStr)) {
-      setEventDate(dateStr);
-    } else {
+    if (!isValidDate(dateStr)) {
       alert('오늘 이후의 날짜를 선택해주세요.');
       return;
     }
-    setCalendarOpen(false);
+
+    // 이미 선택된 날짜면 제거, 아니면 추가
+    if (visitDates.includes(dateStr)) {
+      setVisitDates(visitDates.filter(d => d !== dateStr));
+    } else {
+      setVisitDates([...visitDates, dateStr].sort());
+    }
+  };
+
+  // 날짜 제거 핸들러
+  const handleRemoveDate = (dateStr: string) => {
+    setVisitDates(visitDates.filter(d => d !== dateStr));
   };
 
   // 축제 목록 불러오기
@@ -73,7 +89,7 @@ const MeetingPotWritePage: React.FC = () => {
         const res = await axiosInstance.get('/api/auth/user/event', {
           params: {
             startDate: today,
-            endDate: '2030-12-31', // 미래 날짜까지
+            endDate: '2030-12-31',
             page: 1,
             size: 100,
           },
@@ -87,54 +103,56 @@ const MeetingPotWritePage: React.FC = () => {
     fetchEvents();
   }, []);
 
-  // 축제 선택 시 이름에 축제 이름 포함
+  // 축제 선택 시 제목에 축제 이름 포함
   useEffect(() => {
-    if (selectedEvent && !name.includes(selectedEvent.title)) {
-      // 축제 이름이 포함되어 있지 않으면 추가
-      if (name.trim() === '') {
-        setName(`${selectedEvent.title} 같이 갈 사람~`);
-      } else {
-        // 이미 입력된 이름이 있으면 축제 이름을 포함하도록 안내
-        setName(`${selectedEvent.title} ${name}`);
+    if (selectedEvent && !title.includes(selectedEvent.title)) {
+      if (title.trim() === '') {
+        setTitle(`${selectedEvent.title} 동행 구합니다`);
       }
     }
   }, [selectedEvent]);
 
-  const isFormValid = name.trim() && information.trim() && selectedCategory && eventDate && isValidDate(eventDate);
+  const isFormValid = 
+    selectedEvent !== null &&
+    title.trim() !== '' &&
+    content.trim() !== '' &&
+    visitDates.length > 0 &&
+    recruitmentTotal > 0 &&
+    recruitmentPeriodDays > 0;
 
   const handleSubmit = async () => {
     if (!isFormValid) {
-      alert('모든 필드를 올바르게 입력해주세요.');
+      alert('모든 필수 항목을 올바르게 입력해주세요.');
       return;
     }
 
-    // 축제 이름이 포함되어 있는지 확인
-    if (selectedEvent && !name.includes(selectedEvent.title)) {
-      alert('채팅방 이름에 동행할 축제 이름이 포함되어야 합니다.');
+    if (!selectedEvent) {
+      alert('동행할 축제를 선택해주세요.');
       return;
     }
 
     try {
       setLoading(true);
-      const response = await axiosInstance.post('/api/auth/user/companion-chatrooms', {
-        name,
-        information,
-        category: selectedCategory === '전체' ? '' : selectedCategory,
-        eventDate,
+      const response = await axiosInstance.post('/api/auth/user/posts', {
+        eventId: selectedEvent.eventId,
+        title,
+        content,
+        keyList: [],
+        visitDates,
+        recruitmentTotal,
+        recruitmentPeriodDays,
+        preferredGender,
+        preferredMinAge,
+        preferredMaxAge,
       });
 
-      console.log('동행 채팅방 생성 성공:', response.data);
+      console.log('동행 게시글 등록 성공:', response.data);
       alert('동행 모집 게시글이 등록되었습니다!');
       navigate('/meetingpot');
     } catch (error: any) {
-      console.error('동행 채팅방 생성 실패:', error);
+      console.error('동행 게시글 등록 실패:', error);
       const errorMessage = error.response?.data?.message || '게시글 등록에 실패했습니다. 다시 시도해주세요.';
-      
-      if (error.response?.status === 400) {
-        alert('입력한 날짜가 유효하지 않습니다. 오늘 이후의 날짜를 선택해주세요.');
-      } else {
-        alert(errorMessage);
-      }
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -203,64 +221,148 @@ const MeetingPotWritePage: React.FC = () => {
         </div>
 
         <label className={styles.label}>
-          채팅방 이름 <span className={styles.required}>*</span>
-          {selectedEvent && (
-            <span className={styles.hint}>(축제 이름이 포함되어야 합니다)</span>
-          )}
+          제목 <span className={styles.required}>*</span>
         </label>
         <div className={styles.inputBox}>
           <input
             type="text"
-            maxLength={MAX_NAME_LENGTH}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="예: 청춘 페스티벌 같이 갈 사람~"
+            maxLength={MAX_TITLE_LENGTH}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="예: 경기 페스타 동행 구합니다"
           />
         </div>
-        <div className={styles.charCount}>{name.length}/{MAX_NAME_LENGTH}</div>
+        <div className={styles.charCount}>{title.length}/{MAX_TITLE_LENGTH}</div>
 
         <label className={styles.label}>
-          카테고리 <span className={styles.required}>*</span>
+          내용 <span className={styles.required}>*</span>
         </label>
-        <div className={styles.categoryWrap}>
-          {categoryList.filter(cat => cat !== '전체').map((cat) => (
-            <button
-              key={cat}
-              className={`${styles.categoryBtn} ${selectedCategory === cat ? styles.selected : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        <textarea
+          className={styles.textarea}
+          maxLength={MAX_CONTENT_LENGTH}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="예: 주말 일정으로 함께하실 분!"
+        />
+        <div className={styles.charCount}>{content.length}/{MAX_CONTENT_LENGTH}</div>
 
         <label className={styles.label}>
-          동행 일정 <span className={styles.required}>*</span>
+          방문 예정일 <span className={styles.required}>*</span>
         </label>
         <div className={styles.dateInputBox} onClick={() => setCalendarOpen(true)}>
           <input
             type="text"
-            value={eventDate ? eventDate.replace(/-/g, '.') : ''}
+            value={visitDates.length > 0 ? `${visitDates.length}개 선택됨` : '날짜를 선택해주세요'}
             placeholder="날짜를 선택해주세요"
             readOnly
           />
           <img src="/assets/arrow.svg" alt="달력" className={styles.calendarIcon} />
         </div>
-        {eventDate && !isValidDate(eventDate) && (
-          <p className={styles.errorText}>오늘 이후의 날짜를 선택해주세요.</p>
+        {visitDates.length > 0 && (
+          <div className={styles.selectedDates}>
+            {visitDates.map((date) => (
+              <div key={date} className={styles.dateTag}>
+                <span>{formatDateDisplay(date)}</span>
+                <button
+                  className={styles.removeDateBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveDate(date);
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         )}
 
         <label className={styles.label}>
-          채팅방 소개 <span className={styles.required}>*</span>
+          모집 인원 <span className={styles.required}>*</span>
         </label>
-        <textarea
-          className={styles.textarea}
-          maxLength={MAX_DESC_LENGTH}
-          value={information}
-          onChange={(e) => setInformation(e.target.value)}
-          placeholder="예: 20대만! 같이 공연 보고 밥 먹어요"
-        />
-        <div className={styles.charCount}>{information.length}/{MAX_DESC_LENGTH}</div>
+        <div className={styles.inputBox}>
+          <input
+            type="number"
+            min="1"
+            value={recruitmentTotal}
+            onChange={(e) => setRecruitmentTotal(parseInt(e.target.value) || 1)}
+            placeholder="모집 인원 수"
+          />
+        </div>
+
+        <label className={styles.label}>
+          모집 기간 (일) <span className={styles.required}>*</span>
+        </label>
+        <div className={styles.inputBox}>
+          <input
+            type="number"
+            min="1"
+            value={recruitmentPeriodDays}
+            onChange={(e) => setRecruitmentPeriodDays(parseInt(e.target.value) || 7)}
+            placeholder="모집 기간"
+          />
+        </div>
+
+        <label className={styles.label}>
+          선호 성별
+        </label>
+        <div className={styles.genderWrap}>
+          <button
+            className={`${styles.genderBtn} ${preferredGender === 'ANY' ? styles.selected : ''}`}
+            onClick={() => setPreferredGender('ANY')}
+          >
+            성별 무관
+          </button>
+          <button
+            className={`${styles.genderBtn} ${preferredGender === 'MALE' ? styles.selected : ''}`}
+            onClick={() => setPreferredGender('MALE')}
+          >
+            남성
+          </button>
+          <button
+            className={`${styles.genderBtn} ${preferredGender === 'FEMALE' ? styles.selected : ''}`}
+            onClick={() => setPreferredGender('FEMALE')}
+          >
+            여성
+          </button>
+        </div>
+
+        <label className={styles.label}>
+          선호 연령
+        </label>
+        <div className={styles.ageWrap}>
+          <div className={styles.ageInputGroup}>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={preferredMinAge || ''}
+              onChange={(e) => setPreferredMinAge(e.target.value ? parseInt(e.target.value) : null)}
+              placeholder="최소"
+              className={styles.ageInput}
+            />
+            <span className={styles.ageSeparator}>~</span>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={preferredMaxAge || ''}
+              onChange={(e) => setPreferredMaxAge(e.target.value ? parseInt(e.target.value) : null)}
+              placeholder="최대"
+              className={styles.ageInput}
+            />
+            <span className={styles.ageUnit}>세</span>
+          </div>
+          <button
+            className={styles.clearAgeBtn}
+            onClick={() => {
+              setPreferredMinAge(null);
+              setPreferredMaxAge(null);
+            }}
+          >
+            초기화
+          </button>
+        </div>
 
         <button
           className={`${styles.submitBtn} ${isFormValid ? styles.active : ''}`}
@@ -282,4 +384,3 @@ const MeetingPotWritePage: React.FC = () => {
 };
 
 export default MeetingPotWritePage;
-

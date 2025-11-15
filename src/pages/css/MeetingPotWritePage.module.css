@@ -319,3 +319,126 @@
   cursor: not-allowed;
 }
 
+.selectedDates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dateTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #f0f4ff;
+  border: 1px solid #487CEC;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #487CEC;
+}
+
+.removeDateBtn {
+  background: none;
+  border: none;
+  color: #487CEC;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.removeDateBtn:hover {
+  color: #ff4444;
+}
+
+.genderWrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.genderBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.genderBtn:hover {
+  border-color: #487CEC;
+  color: #487CEC;
+}
+
+.genderBtn.selected {
+  background-color: #487CEC;
+  border-color: #487CEC;
+  color: #fff;
+}
+
+.ageWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ageInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.ageInput {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.ageInput::placeholder {
+  color: #999;
+}
+
+.ageSeparator {
+  color: #666;
+  font-size: 14px;
+}
+
+.ageUnit {
+  color: #666;
+  font-size: 14px;
+  min-width: 20px;
+}
+
+.clearAgeBtn {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.clearAgeBtn:hover {
+  border-color: #487CEC;
+  color: #487CEC;
+}
+
