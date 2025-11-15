@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 const AuthRedirect = () => {
   const [searchParams] = useSearchParams();
@@ -16,6 +17,7 @@ const AuthRedirect = () => {
 
     const exchangeCodeForToken = async () => {
       try {
+        // 1. 토큰 교환
         const response = await axios.post(
           `https://api.gyeonggifesta.site/api/token/exchange?code=${code}`,
           null,
@@ -26,15 +28,29 @@ const AuthRedirect = () => {
           }
         );
 
-        const { accessToken, refreshToken, role, verifyId } = response.data.data;
+        const { accessToken, refreshToken, role } = response.data.data;
         console.log('User role:', role);
 
-        // 토큰 저장
+        // 2. 토큰 저장
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
-        localStorage.setItem('verify_id', verifyId);
 
-        // 역할에 따라 이동
+        // 3. verifyId 가져오기
+        try {
+          const userInfoResponse = await axiosInstance.get('/api/auth/user/info');
+          const { verifyId } = userInfoResponse.data.data;
+          
+          if (verifyId) {
+            localStorage.setItem('verify_id', verifyId);
+          } else {
+            console.warn('verifyId를 받지 못했습니다.');
+          }
+        } catch (infoError: any) {
+          console.error('사용자 정보 가져오기 실패:', infoError);
+          // verifyId를 가져오지 못해도 로그인은 진행
+        }
+
+        // 4. 역할에 따라 이동
         if (role === 'ROLE_SEMI_USER') {
           navigate('/register');
         } else if (role === 'ROLE_USER') {

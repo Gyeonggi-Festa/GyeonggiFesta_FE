@@ -63,12 +63,17 @@ const ChatRoom: React.FC = () => {
   const [verifyId, setVerifyId] = useState<string>(''); // verifyId 상태 추가
   
   useEffect(() => {
-    const fetchMemberInfo = async () => {
+    const initializeChatRoom = async () => {
       if (!roomId) {
         console.error('roomId가 없습니다.');
         return;
       }
       
+      // verifyId는 localStorage에서 가져오기
+      const storedVerifyId = localStorage.getItem('verify_id') || '';
+      setVerifyId(storedVerifyId);
+      
+      // memberInfo API는 선택적으로 호출 (실패해도 계속 진행)
       try {
         console.log(`채팅방 멤버 정보 요청: roomId=${roomId}`);
         const response = await axiosInstance.get(`/api/auth/user/chatrooms/${roomId}/memberInfo`);
@@ -76,39 +81,38 @@ const ChatRoom: React.FC = () => {
         
         const members = response.data.data;
         
-        if (!members || members.length === 0) {
-          console.error('멤버 정보가 비어있습니다.');
-          alert('채팅방 정보를 불러올 수 없습니다.');
-          navigate('/chat');
-          return;
-        }
-        
-        // 현재 사용자의 정보 찾기 (배열의 첫 번째 요소가 현재 사용자)
-        const currentUserInfo = members[0];
-        
-        if (currentUserInfo) {
-          setVerifyId(currentUserInfo.verifyId);
-          setIsOwner(currentUserInfo.role === 'OWNER');
-          await fetchMessages(currentUserInfo.verifyId);
-          await setupWebSocket(currentUserInfo.verifyId);
+        if (members && members.length > 0) {
+          // 현재 사용자의 정보 찾기 (배열의 첫 번째 요소가 현재 사용자)
+          const currentUserInfo = members[0];
+          
+          if (currentUserInfo) {
+            if (currentUserInfo.verifyId) {
+              setVerifyId(currentUserInfo.verifyId);
+              localStorage.setItem('verify_id', currentUserInfo.verifyId);
+            }
+            if (currentUserInfo.role) {
+              setIsOwner(currentUserInfo.role === 'OWNER');
+            }
+          }
         }
       } catch (error: any) {
-        console.error('방장 여부 확인 실패:', error);
-        
-        if (error?.response?.status === 404) {
-          alert('존재하지 않는 채팅방이거나 접근 권한이 없습니다.');
-          navigate('/chat');
-        } else if (error?.response?.status === 401) {
-          // 로그인 없이도 페이지 접근 가능하도록 리디렉션 제거
-          console.warn('로그인이 필요합니다. 일부 기능이 제한될 수 있습니다.');
-        } else {
-          alert('채팅방 정보를 불러오는 중 오류가 발생했습니다.');
-        }
+        console.warn('멤버 정보 가져오기 실패 (계속 진행):', error);
+        // 404나 다른 에러가 발생해도 계속 진행
+      }
+      
+      // verifyId가 있으면 메시지와 소켓 설정
+      const finalVerifyId = storedVerifyId || localStorage.getItem('verify_id') || '';
+      if (finalVerifyId) {
+        await fetchMessages(finalVerifyId);
+        await setupWebSocket(finalVerifyId);
+      } else {
+        // verifyId가 없어도 소켓 연결은 시도 (로그인 없이 접근 가능하도록)
+        await setupWebSocket('');
       }
     };
     
     if (roomId) {
-      fetchMemberInfo();
+      initializeChatRoom();
     }
     
     // 컴포넌트 언마운트 시 정리
@@ -153,13 +157,24 @@ const ChatRoom: React.FC = () => {
       if (subscribedRef.current) return;
       subscribedRef.current = true;
       
+      // 1. 소켓 연결
       await connectStomp();
       stompConnectedRef.current = true; // STOMP 연결 완료 표시
       console.log('✅ STOMP 연결 완료');
       
+      // 2. 채팅방 입장 소켓 메시지 전송
       sendEnterMessage(Number(roomId));
       
-      // 채팅방 입장 시 읽음 처리
+      // 3. 채팅방 join API 호출 (토큰만 보내면 됨)
+      try {
+        await axiosInstance.post(`/api/auth/user/chatrooms/${roomId}/join`);
+        console.log('✅ 채팅방 입장 완료');
+      } catch (joinError: any) {
+        console.error('채팅방 입장 실패:', joinError);
+        // join 실패해도 소켓 연결은 유지
+      }
+      
+      // 4. 채팅방 입장 시 읽음 처리
       setTimeout(() => {
         sendReadMessage(Number(roomId));
       }, 500);

@@ -76,12 +76,21 @@ export const sendChatMessage = (
     return;
   }
 
-  const messagePayload = {
+  // tempS3Key가 null이 아닐 때만 포함
+  const messagePayload: {
+    chatRoomId: number;
+    content: string;
+    type: string;
+    tempS3Key?: string;
+  } = {
     chatRoomId,
     content,
     type,
-    tempS3Key,
   };
+
+  if (tempS3Key) {
+    messagePayload.tempS3Key = tempS3Key;
+  }
 
   console.log('📤 메시지 전송:', messagePayload);
   stompClient.send(
