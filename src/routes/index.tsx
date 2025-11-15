@@ -21,6 +21,8 @@ import EditProfilePage from '../pages/EditProfilePage'
 import FestivalAllPage from '../pages/FestivalAllPage'
 import FestivalDetail from '../pages/FestivalDetail'
 import ReviewPage from '../components/ReviewPage'
+import MeetingPotPage from '../pages/MeetingPotPage'
+import MeetingPotWritePage from '../pages/MeetingPotWritePage'
 
 export const router = createBrowserRouter([
   {
@@ -56,4 +58,6 @@ export const router = createBrowserRouter([
     { path: '/term', element: <TermsPage /> },
     { path: '/register', element: <RegisterPage /> },
     { path: '/delete', element: <DeleteAccountPage /> },
+    { path: '/meetingpot', element: <MeetingPotPage /> },
+    { path: '/meetingpot/write', element: <MeetingPotWritePage /> },
 ])
