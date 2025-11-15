@@ -106,25 +106,34 @@ const MainpageLogin = () => {
 
       <UpcomingEvents onDateSelect={setSelectedDate} />
 
-      {festivals.map((festival, index) => (
-        <FestivalCardWrapper key={`festival-${festival.eventId}-${index}`}>
-          <FestivalCard
-            eventId={festival.eventId}
-            commentCount={festival.comments}
-            mainText={festival.title}
-            subText={festival.category}
-            festivalName={festival.title}
-            dateRange={`${festival.startDate} ~ ${festival.endDate}`}
-            price={festival.isFree === '무료' ? '무료' : '유료'}
-            location={festival.isFree === "Y" ? "무료" : "유료"}
-            likedDefault={festival.currentUserLike}
-            mainImg={festival.mainImg}
-            rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)
-            likes={festival.likes || 0}
-            
-          />
-        </FestivalCardWrapper>
-      ))}
+      {festivals.map((festival, index) => {
+        // 이미지 URL에 특수문자가 있을 경우를 대비해 처리
+        const safeImageUrl = festival.mainImg 
+          ? festival.mainImg.includes('http') 
+            ? festival.mainImg 
+            : festival.mainImg
+          : undefined;
+        
+        return (
+          <FestivalCardWrapper key={`festival-${festival.eventId}-${index}`}>
+            <FestivalCard
+              eventId={festival.eventId}
+              commentCount={festival.comments}
+              mainText={festival.title}
+              subText={festival.category}
+              festivalName={festival.title}
+              dateRange={`${festival.startDate} ~ ${festival.endDate}`}
+              price={festival.isFree === '무료' ? '무료' : '유료'}
+              location={festival.isFree === "Y" ? "무료" : "유료"}
+              likedDefault={festival.currentUserLike}
+              mainImg={safeImageUrl}
+              rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)
+              likes={festival.likes || 0}
+              
+            />
+          </FestivalCardWrapper>
+        );
+      })}
 
       {hasMore && <div ref={observerRef} style={{ height: '1px' }} />}
       <BottomNav />
