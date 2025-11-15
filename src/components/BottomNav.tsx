@@ -18,8 +18,8 @@ const navItems = [
   },
   {
     label: '모임팟',
-    icon: '/assets/meetingpot.png',
-    activeIcon: '/assets/meetingpot-active.png',
+    icon: '/assets/meeting.png',
+    activeIcon: '/assets/meeting.png',
     path: '/meetingpot',
   },
   {
@@ -28,7 +28,6 @@ const navItems = [
     activeIcon: '/assets/chat-active.svg',
     path: '/chat',
   },
-
   {
     label: '마이페이지',
     icon: '/assets/mypage.svg',
