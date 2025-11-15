@@ -60,7 +60,6 @@ const ChatRoom: React.FC = () => {
   const { roomTitle, participantCount } = location.state || {};
   const [isOwner, setIsOwner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
-  const [verifyId, setVerifyId] = useState<string>(''); // verifyId 상태 추가
   
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -71,7 +70,6 @@ const ChatRoom: React.FC = () => {
       
       // verifyId는 localStorage에서 가져오기
       const storedVerifyId = localStorage.getItem('verify_id') || '';
-      setVerifyId(storedVerifyId);
       
       // memberInfo API는 선택적으로 호출 (실패해도 계속 진행)
       try {
@@ -87,7 +85,6 @@ const ChatRoom: React.FC = () => {
           
           if (currentUserInfo) {
             if (currentUserInfo.verifyId) {
-              setVerifyId(currentUserInfo.verifyId);
               localStorage.setItem('verify_id', currentUserInfo.verifyId);
             }
             if (currentUserInfo.role) {
