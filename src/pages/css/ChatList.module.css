@@ -38,7 +38,7 @@
   .chat-list {
     display: flex;
     flex-direction: column;
-    padding-bottom: 100px; /* 바텀 네비게이션 공간 확보 */
+    padding-bottom: 50px; /* 바텀 네비게이션 공간 확보 */
   }
   .chat-filter-buttons {
   display: flex;
