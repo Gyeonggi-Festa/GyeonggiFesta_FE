@@ -84,7 +84,7 @@ const MainpageLogin = () => {
       <UpcomingEvents />
 
       {festivals.map((festival, index) => (
-        <FestivalCardWrapper key={festival.eventId || index}>
+        <FestivalCardWrapper key={`${festival.eventId}-${index}`}>
           <FestivalCard
             eventId={festival.eventId}
             commentCount={festival.comments}
