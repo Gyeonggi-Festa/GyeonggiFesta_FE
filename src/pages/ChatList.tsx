@@ -28,7 +28,6 @@ interface ApiChatData {
   lastMessageText: string;
 }
 
-
 interface GroupChatData {
   chatRoomId: number;
   name: string;
