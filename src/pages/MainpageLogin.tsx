@@ -6,6 +6,7 @@ import BottomNav from '../components/BottomNav';
 import axiosInstance from '../api/axiosInstance';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { getRating } from '../utils/ratingUtils';
 
 const formatDate = (date: Date) => {
   const yyyy = date.getFullYear();
@@ -25,7 +26,7 @@ interface Festival {
   guName: string;
   currentUserLike: boolean;
   mainImg?: string;
-  rating: number;      // ⭐ 평점
+  rating?: number;      // ⭐ 평점 (optional - 없으면 랜덤 생성)
   likes: number;  
 }
 
@@ -119,7 +120,7 @@ const MainpageLogin = () => {
             location={festival.guName}
             likedDefault={festival.currentUserLike}
             mainImg={festival.mainImg}
-            rating={festival.rating || 3.0} // 없을 경우 기본값
+            rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)
             likes={festival.likes || 0}
             
           />

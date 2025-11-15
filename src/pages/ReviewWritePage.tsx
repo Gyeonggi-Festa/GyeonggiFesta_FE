@@ -123,8 +123,8 @@ export default function ReviewWritePage() {
                     )}
                 </div>
                 <div className={styles.info}>
-                    <img src="/assets/location.svg" alt="위치" className={styles.icon} />
-                    <span className={styles.gu}>{eventData?.guName ?? "구 정보 없음"}</span>
+                 
+                    <span className={styles.gu}>{eventData?.guName ?? ""}</span>
                 </div>
                 <h1 className={styles.title}>{eventData?.title ?? "행사 제목 없음"}</h1>
             </div>

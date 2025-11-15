@@ -29,11 +29,17 @@ export default function FestivalAllPage() {
   
   const [showSearch, setShowSearch] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const filteredEvents =
-  events.filter((event) =>
-    (selectedCategory === '전체' || event.category === selectedCategory) &&
-    (searchKeyword === '' || event.title.includes(searchKeyword) || event.guName.includes(searchKeyword))
-  );
+  const filteredEvents = (events || []).filter((event) => {
+    // 카테고리 필터
+    const categoryMatch = selectedCategory === '전체' || event.category === selectedCategory;
+    
+    // 검색 키워드 필터 (안전하게 처리)
+    const keywordMatch = searchKeyword === '' || 
+      (event.title && event.title.toString().toLowerCase().includes(searchKeyword.toLowerCase())) ||
+      (event.guName && event.guName.toString().toLowerCase().includes(searchKeyword.toLowerCase()));
+    
+    return categoryMatch && keywordMatch;
+  });
 
   const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
@@ -48,9 +54,12 @@ export default function FestivalAllPage() {
             size: 2000,
           },
         });
-        setEvents(res.data.data.content);
+        // 안전하게 배열 처리
+        const eventsData = res.data?.data?.content;
+        setEvents(Array.isArray(eventsData) ? eventsData : []);
       } catch (err) {
         console.error('행사 불러오기 실패:', err);
+        setEvents([]); // 에러 발생 시 빈 배열로 설정
       }
     };
     fetchEvents();

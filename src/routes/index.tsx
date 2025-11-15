@@ -19,7 +19,7 @@ import AuthRedirect from '../pages/AuthRedirect'
 import EditProfilePage from '../pages/EditProfilePage'
 import FestivalAllPage from '../pages/FestivalAllPage'
 import FestivalDetail from '../pages/FestivalDetail'
-
+import ReviewPage from '../components/ReviewPage'
 
 export const router = createBrowserRouter([
   {
@@ -42,8 +42,10 @@ export const router = createBrowserRouter([
   { path: '/mainpage', element: <MainpageLogin /> },
   { path: '/ai', element: <AIRecommendPage /> },
   { path: '/popular', element: <PopularPage /> },
-  { path: '/fest/detail', element: <FestivalDetail /> },
+  // 더 구체적인 경로를 먼저 배치
   { path: '/fest/detail/review/write', element: <ReviewWritePage /> },
+  { path: '/fest/detail/review', element: <ReviewPage /> },
+  { path: '/fest/detail', element: <FestivalDetail /> },
     { path: '/chat/room/:roomId', element: <ChatRoom /> },
     { path: '/login-success', element: <AuthRedirect /> },
     { path: '/fest/all', element: <FestivalAllPage /> },
