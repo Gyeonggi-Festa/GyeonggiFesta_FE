@@ -307,27 +307,65 @@ const MeetingPotWritePage: React.FC = () => {
         <label className={styles.label}>
           모집 인원 <span className={styles.required}>*</span>
         </label>
-        <div className={styles.inputBox}>
+        <div className={styles.numberInputWrapper}>
+          <button
+            type="button"
+            className={styles.numberButton}
+            onClick={() => setRecruitmentTotal(Math.max(1, recruitmentTotal - 1))}
+            disabled={recruitmentTotal <= 1}
+          >
+            −
+          </button>
           <input
             type="number"
             min="1"
             value={recruitmentTotal}
-            onChange={(e) => setRecruitmentTotal(parseInt(e.target.value) || 1)}
-            placeholder="모집 인원 수"
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 1;
+              setRecruitmentTotal(Math.max(1, value));
+            }}
+            className={styles.numberInput}
+            readOnly
           />
+          <button
+            type="button"
+            className={styles.numberButton}
+            onClick={() => setRecruitmentTotal(recruitmentTotal + 1)}
+          >
+            +
+          </button>
         </div>
 
         <label className={styles.label}>
           모집 기간 (일) <span className={styles.required}>*</span>
         </label>
-        <div className={styles.inputBox}>
+        <div className={styles.numberInputWrapper}>
+          <button
+            type="button"
+            className={styles.numberButton}
+            onClick={() => setRecruitmentPeriodDays(Math.max(1, recruitmentPeriodDays - 1))}
+            disabled={recruitmentPeriodDays <= 1}
+          >
+            −
+          </button>
           <input
             type="number"
             min="1"
             value={recruitmentPeriodDays}
-            onChange={(e) => setRecruitmentPeriodDays(parseInt(e.target.value) || 7)}
-            placeholder="모집 기간"
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 1;
+              setRecruitmentPeriodDays(Math.max(1, value));
+            }}
+            className={styles.numberInput}
+            readOnly
           />
+          <button
+            type="button"
+            className={styles.numberButton}
+            onClick={() => setRecruitmentPeriodDays(recruitmentPeriodDays + 1)}
+          >
+            +
+          </button>
         </div>
 
         <label className={styles.label}>
@@ -405,6 +443,17 @@ const MeetingPotWritePage: React.FC = () => {
           onClose={() => setCalendarOpen(false)}
           onSelectDate={handleDateChange}
         />
+      )}
+
+      {/* 로딩 오버레이 */}
+      {loading && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingContent}>
+            <div className={styles.spinner}></div>
+            <p className={styles.loadingText}>게시글과 채팅방을 생성하는 중...</p>
+            <p className={styles.loadingSubtext}>잠시만 기다려주세요</p>
+          </div>
+        </div>
       )}
     </div>
   );
