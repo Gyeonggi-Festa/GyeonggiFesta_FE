@@ -100,9 +100,10 @@ const MainTopCard: React.FC = () => {
                   <div
                     className={styles.cardWrapper}
                     style={{
-                      backgroundImage: `url(${item.imageUrl})`,
+                      backgroundImage: item.imageUrl ? `url("${item.imageUrl}")` : 'none',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
+                      backgroundColor: item.imageUrl ? 'transparent' : '#f0f0f0',
                     }}
                     onClick={() => navigate(`/fest/detail?eventId=${item.eventId}`)}
                   >
