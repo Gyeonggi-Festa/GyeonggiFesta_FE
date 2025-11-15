@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./css/FestivalDetail.module.css";
 import FestivalInfo from "../components/FestivalInfo";
 import FestivalDescription from "../components/FestivalDescription";
+import FestivalMap from "../components/FestivalMap";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axiosInstance from "../api/axiosInstance";
 import ReviewSection from "../components/ReviewSection";
@@ -33,7 +34,12 @@ export default function FestivalDetail() {
   const [favorited, setFavorited] = useState(false);
   const navigate = useNavigate();
   const [likeAnimation, setLikeAnimation] = useState(false);
-const [favoriteAnimation, setFavoriteAnimation] = useState(false);
+  const [favoriteAnimation, setFavoriteAnimation] = useState(false);
+  const [locationData, setLocationData] = useState<{
+    latitude: number;
+    longitude: number;
+    roadAddress: string;
+  } | null>(null);
   const copyToClipboard = () => {
     if (!data?.orgLink) return alert('복사할 링크가 없습니다.');
     navigator.clipboard.writeText(data.orgLink)
@@ -70,8 +76,17 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
 
   useEffect(() => {
     if (data) {
-      setLiked(data.likes > 0); // API에 currentUserLike가 없으므로 likes 개수로 임시 처리
-      setFavorited(data.favorites > 0); // API에 currentUserFavorite가 없으므로 favorites 개수로 임시 처리
+      setLiked(data.liked === true); // liked 필드로 좋아요 상태 확인
+      setFavorited(data.favorite === true); // favorite 필드로 즐겨찾기 상태 확인
+      
+      // data에서 직접 위치 정보 가져오기
+      if (data.latitude && data.longitude) {
+        setLocationData({
+          latitude: data.latitude,
+          longitude: data.longitude,
+          roadAddress: data.roadAddress || '',
+        });
+      }
     }
   }, [data]);
   
@@ -82,7 +97,7 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
   const status = getStatus(data.startDate, data.endDate);
 
   const detailInfo = {
-    location: "정보 없음", // place 필드 없음
+    location: data.roadAddress || "정보 없음",
     date: `${data.startDate.replace(/-/g, ".")} ~ ${data.endDate.replace(/-/g, ".")}`,
     fee: data.useFee || (data.isFree === "Y" ? "무료" : "유료"),
     people: "정보 없음", // useTarget 필드 없음
@@ -154,9 +169,17 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
 
       <div className={styles.locationInfoRow}>
         <img src="/assets/detail/map.svg" alt="Map Icon" className={styles.mapIcon} />
-        <span className={styles.locationText}>{data.category || "카테고리"}</span>
-        <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
-        <span style={{ color: '#FFB200' }}>0.0</span>
+        <span className={styles.locationText}>
+          {data.roadAddress || "주소 정보 없음"}
+        </span>
+        {data.rating > 0 ? (
+          <>
+            <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
+            <span style={{ color: '#FFB200' }}>{data.rating.toFixed(1)}</span>
+          </>
+        ) : (
+          <span style={{ color: '#999', fontSize: '12px' }}>평점 없음</span>
+        )}
         <img src="/assets/FestivalCard/heart-mini.svg" alt="좋아요" />
         <span style={{ color: '#CC4E00' }}>{data.likes || 0}</span>
       </div>
@@ -216,7 +239,14 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
       </div>
 
       <FestivalInfo values={detailInfo} />
-      {/* FestivalMap 제거 - lat, lot 필드 없음 */}
+      {locationData && (
+        <FestivalMap
+          lat={locationData.latitude}
+          lng={locationData.longitude}
+          roadAddress={locationData.roadAddress}
+          orgName={data.orgName}
+        />
+      )}
       <FestivalDescription content={data.timeInfo || "등록된 시간 정보가 없습니다."} />
       <div ref={commentSectionRef}>
         <CommentSection eventId={eventId!} />

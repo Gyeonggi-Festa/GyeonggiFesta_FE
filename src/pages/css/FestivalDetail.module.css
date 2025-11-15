@@ -170,6 +170,12 @@
   font-size: 14px;
   font-weight: 500;
   color: #929292;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+  flex: 1;
+  min-width: 0;
 }
 .moreContainer {
     position: relative;

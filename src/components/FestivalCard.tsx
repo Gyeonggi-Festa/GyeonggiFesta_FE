@@ -55,7 +55,9 @@ const FestivalCard = ({
   return (
     <>
       <CardWrapper $background={mainImg} onClick={handleClick}>
-        <CommentBadge>평점 {rating.toFixed(1)}</CommentBadge>
+        <CommentBadge>
+          {rating > 0 ? `평점 ${rating.toFixed(1)}` : '평점 없음'}
+        </CommentBadge>
 
         <ContentWrapper>
           <MainText>{mainText}</MainText>
@@ -79,14 +81,19 @@ const FestivalCard = ({
             <PriceText>{price}</PriceText>
             <LocationText>
               <img src="/assets/location.svg" alt="위치 아이콘" width={14} height={14} />
-              {location}
-              
+              <LocationTextContent>{location}</LocationTextContent>
             </LocationText>
 
             <MetricsWrapper>
               <MetricItem>
-                <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
-                <span style={{ color: '#FFB200' }}>{rating.toFixed(1)}</span>
+                {rating > 0 ? (
+                  <>
+                    <img src="/assets/FestivalCard/star-mini.svg" alt="평점" />
+                    <span style={{ color: '#FFB200' }}>{rating.toFixed(1)}</span>
+                  </>
+                ) : (
+                  <span style={{ color: '#999', fontSize: '12px' }}>평점 없음</span>
+                )}
               </MetricItem>
               <MetricItem>
                 <img src="/assets/FestivalCard/heart-mini.svg" alt="좋아요" />
@@ -262,10 +269,21 @@ const LocationText = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+  font-size: clamp(12px, 3.5vw, 14px);
+  max-width: 40%;
+  flex-shrink: 1;
+  min-width: 0;
+  
+  img {
+    flex-shrink: 0;
+  }
+`;
+
+const LocationTextContent = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: clamp(12px, 3.5vw, 14px);
+  min-width: 0;
 `;
 const MetricsWrapper = styled.div`
   display: flex;

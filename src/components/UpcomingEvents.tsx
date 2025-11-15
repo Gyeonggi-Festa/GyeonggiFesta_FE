@@ -18,6 +18,7 @@ interface EventType {
   endDate: string;
   status: 'NOT_STARTED' | 'IN_PROGRESS' | 'ENDED';
   mainImg:string;
+  roadAddress?: string;
 }
 const formatDate = (date: Date): string =>
   date.toISOString().split('T')[0];
@@ -116,7 +117,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ onDateSelect }) => {
             key={event.eventId}
             category={event.category}
             title={event.title}
-            location={event.isFree === "Y" ? "무료" : "유료"}
+            location={event.roadAddress || "주소 정보 없음"}
             dateRange={`${event.startDate} ~ ${event.endDate}`}
             mainImg={event.mainImg}
             eventId={event.eventId}

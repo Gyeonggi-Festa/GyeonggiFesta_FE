@@ -6,7 +6,6 @@ import BottomNav from '../components/BottomNav';
 import axiosInstance from '../api/axiosInstance';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { getRating } from '../utils/ratingUtils';
 
 const formatDate = (date: Date) => {
   const yyyy = date.getFullYear();
@@ -27,7 +26,8 @@ interface Festival {
   favorites?: number;  // favorites가 1이면 좋아요가 칠해짐
   mainImg?: string;
   rating?: number;      // ⭐ 평점 (optional - 없으면 랜덤 생성)
-  likes: number;  
+  likes: number;
+  roadAddress?: string;  // 도로명 주소
 }
 
 const MainpageLogin = () => {
@@ -117,10 +117,10 @@ const MainpageLogin = () => {
             festivalName={festival.title}
             dateRange={`${festival.startDate} ~ ${festival.endDate}`}
             price={festival.isFree === '무료' ? '무료' : '유료'}
-            location={festival.isFree === "Y" ? "무료" : "유료"}
+            location={festival.roadAddress || "주소 정보 없음"}
             likedDefault={festival.favorites === 1 || festival.currentUserLike === true}
             mainImg={festival.mainImg}
-            rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)
+            rating={festival.rating && festival.rating > 0 ? festival.rating : 0} // rating이 0이면 표시하지 않음
             likes={festival.likes || 0}
             
           />
