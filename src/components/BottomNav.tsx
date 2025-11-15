@@ -18,8 +18,8 @@ const navItems = [
   },
   {
     label: '모임팟',
-    icon: '/assets/meeting.png',
-    activeIcon: '/assets/meeting.png',
+    icon: '/assets/meeting.svg',
+    activeIcon: '/assets/meeting-active.svg',
     path: '/meetingpot',
   },
   {
