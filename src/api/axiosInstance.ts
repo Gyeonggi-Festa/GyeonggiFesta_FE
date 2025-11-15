@@ -48,8 +48,7 @@ axiosInstance.interceptors.response.use(
         console.error('토큰 재발급 실패:', refreshError);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/'; // ← 강제 리디렉션
-        // 필요하면 로그아웃 처리
+        // 리디렉션 제거: 로그인 없이도 페이지 접근 가능하도록
         return Promise.reject(refreshError);
       }
     }

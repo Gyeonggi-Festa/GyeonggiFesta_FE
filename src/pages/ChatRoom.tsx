@@ -99,8 +99,8 @@ const ChatRoom: React.FC = () => {
           alert('존재하지 않는 채팅방이거나 접근 권한이 없습니다.');
           navigate('/chat');
         } else if (error?.response?.status === 401) {
-          alert('로그인이 필요합니다.');
-          navigate('/login');
+          // 로그인 없이도 페이지 접근 가능하도록 리디렉션 제거
+          console.warn('로그인이 필요합니다. 일부 기능이 제한될 수 있습니다.');
         } else {
           alert('채팅방 정보를 불러오는 중 오류가 발생했습니다.');
         }
