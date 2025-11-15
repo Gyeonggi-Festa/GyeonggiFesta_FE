@@ -23,6 +23,7 @@ import FestivalDetail from '../pages/FestivalDetail'
 import ReviewPage from '../components/ReviewPage'
 import MeetingPotPage from '../pages/MeetingPotPage'
 import MeetingPotWritePage from '../pages/MeetingPotWritePage'
+import MeetingPotDetailPage from '../pages/MeetingPotDetailPage'
 
 export const router = createBrowserRouter([
   {
@@ -60,4 +61,5 @@ export const router = createBrowserRouter([
     { path: '/delete', element: <DeleteAccountPage /> },
     { path: '/meetingpot', element: <MeetingPotPage /> },
     { path: '/meetingpot/write', element: <MeetingPotWritePage /> },
+    { path: '/meetingpot/:postId', element: <MeetingPotDetailPage /> },
 ])

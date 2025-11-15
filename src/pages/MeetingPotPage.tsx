@@ -98,8 +98,7 @@ const MeetingPotPage: React.FC = () => {
   }, []);
 
   const handlePostClick = (postId: number) => {
-    // 나중에 상세 페이지로 이동
-    console.log('게시글 클릭:', postId);
+    navigate(`/meetingpot/${postId}`);
   };
 
   const handleWriteClick = () => {

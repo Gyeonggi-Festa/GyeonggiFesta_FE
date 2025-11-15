@@ -32,15 +32,6 @@ const MeetingPotWritePage: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // 오늘 날짜를 yyyy-MM-dd 형식으로 반환
-  const getTodayString = (): string => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  };
-
   // 날짜 유효성 검사 (오늘 이후인지 확인)
   const isValidDate = (dateStr: string): boolean => {
     if (!dateStr) return false;
@@ -81,21 +72,19 @@ const MeetingPotWritePage: React.FC = () => {
     setVisitDates(visitDates.filter(d => d !== dateStr));
   };
 
-  // 축제 목록 불러오기
+  // 축제 목록 불러오기 (전체 축제)
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const today = getTodayString();
         const res = await axiosInstance.get('/api/auth/user/event', {
           params: {
-            startDate: today,
-            endDate: '2030-12-31',
             page: 1,
-            size: 100,
+            size: 1000, // 전체 축제를 불러오기 위해 크게 설정
           },
         });
         const content = res.data?.data?.content ?? [];
         setEvents(content);
+        console.log('전체 축제 목록:', content);
       } catch (error) {
         console.error('축제 목록 불러오기 실패:', error);
       }
@@ -131,9 +120,16 @@ const MeetingPotWritePage: React.FC = () => {
       return;
     }
 
+    if (visitDates.length === 0) {
+      alert('방문 예정일을 최소 1개 이상 선택해주세요.');
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await axiosInstance.post('/api/auth/user/posts', {
+
+      // 1. 게시글 생성
+      const postResponse = await axiosInstance.post('/api/auth/user/posts', {
         eventId: selectedEvent.eventId,
         title,
         content,
@@ -146,8 +142,39 @@ const MeetingPotWritePage: React.FC = () => {
         preferredMaxAge,
       });
 
-      console.log('동행 게시글 등록 성공:', response.data);
-      alert('동행 모집 게시글이 등록되었습니다!');
+      console.log('동행 게시글 등록 성공:', postResponse.data);
+
+      // 2. 채팅방 생성 (visitDates의 첫 번째 날짜 사용)
+      const eventDate = visitDates[0]; // 첫 번째 방문 예정일을 채팅방 날짜로 사용
+      
+      // 채팅방 이름에 축제 이름이 포함되도록 확인
+      let chatRoomName = title;
+      if (!chatRoomName.includes(selectedEvent.title)) {
+        chatRoomName = `${selectedEvent.title} ${chatRoomName}`;
+      }
+      
+      // 채팅방 이름이 30자를 초과하면 축제 이름 + 간단한 설명으로 변경
+      if (chatRoomName.length > 30) {
+        chatRoomName = `${selectedEvent.title} 같이 갈 사람~`;
+      }
+
+      try {
+        const chatResponse = await axiosInstance.post('/api/auth/user/companion-chatrooms', {
+          name: chatRoomName,
+          information: content.length > 100 ? content.substring(0, 100) + '...' : content,
+          category: selectedEvent.category,
+          eventDate: eventDate,
+        });
+
+        console.log('채팅방 생성 성공:', chatResponse.data);
+        alert('동행 모집 게시글이 등록되었고, 단체 채팅방이 생성되었습니다!');
+      } catch (chatError: any) {
+        console.error('채팅방 생성 실패:', chatError);
+        // 채팅방 생성 실패해도 게시글은 등록되었으므로 경고만 표시
+        const chatErrorMessage = chatError.response?.data?.message || '채팅방 생성에 실패했습니다.';
+        alert(`게시글은 등록되었지만 채팅방 생성에 실패했습니다: ${chatErrorMessage}`);
+      }
+
       navigate('/meetingpot');
     } catch (error: any) {
       console.error('동행 게시글 등록 실패:', error);

@@ -43,7 +43,7 @@ const categories = [
 ];
 
 const Chat: React.FC = () => {
-  const [selectedMode, setSelectedMode] = useState<'my' | 'unread' | 'group'>('my');
+  const [selectedMode, setSelectedMode] = useState<'my' | 'unread' | 'group' | 'companion'>('my');
   const [visibleCount, setVisibleCount] = useState(4);
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -116,9 +116,33 @@ const Chat: React.FC = () => {
   
 
   
+  // 동행 채팅방 필터링 (createdFrom === 'POST')
+  const postRooms = apiChatList.filter((room) => room.createdFrom === 'POST');
+  const companionChatData: ChatData[] = postRooms.map(chat => {
+    let mode: 'my' | 'unread' | 'group';
+    if (chat.type === "GROUP") {
+      mode = 'group';
+    } else if (chat.notReadMessageCount > 0) {
+      mode = 'unread';
+    } else {
+      mode = 'my';
+    }
+    return {
+      id: chat.chatRoomId,
+      name: chat.name,
+      participation: chat.participation,
+      message: chat.lastMessageText || "메시지 없음",
+      time: chat.lastMessageTime,
+      hasNotification: chat.notReadMessageCount > 0,
+      mode,
+    };
+  });
+
   const filteredChats = selectedMode === 'my'
-  ? chatData.filter(chat => chat.mode === 'my' || chat.mode === 'unread' ||chat.mode === 'group') // ✅ 수정: 그룹도 포함
-  : chatData.filter(chat => chat.mode === selectedMode);
+    ? chatData.filter(chat => chat.mode === 'my' || chat.mode === 'unread' || chat.mode === 'group')
+    : selectedMode === 'companion'
+    ? companionChatData
+    : chatData.filter(chat => chat.mode === selectedMode);
 
   const navigate = useNavigate();
   
@@ -143,18 +167,19 @@ const Chat: React.FC = () => {
       </div>
 
       <div className={styles["chat-filter-buttons"]}>
-        {['my', 'unread', 'group'].map(mode => (
+        {['my', 'unread', 'group', 'companion'].map(mode => (
           <motion.button
             key={mode}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`${styles["filter-button"]} ${selectedMode === mode ? styles["selected"] : ''}`}
-            onClick={() => setSelectedMode(mode as 'my' | 'unread' | 'group')}
+            onClick={() => setSelectedMode(mode as 'my' | 'unread' | 'group' | 'companion')}
           >
             {{
               my: '내 채팅방',
               unread: '안 읽은 채팅방',
               group: '단체 채팅방',
+              companion: '동행채팅',
             }[mode]}
           </motion.button>
         ))}

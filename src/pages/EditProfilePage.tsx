@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import BirthSelectNone from '../components/BirthSelectNone';
 import GenderSelectNone from '../components/GenderSelectNone';
 import EmailInputNone from '../components/EmailInputNone';
 import NicknameInput from '../components/NicknameInput';
@@ -78,7 +77,6 @@ const EditProfilePage: React.FC = () => {
       <NicknameInput />
       <EmailInputNone />
       <GenderSelectNone />
-      <BirthSelectNone />
 
       <button
         className={styles.submitButton}
