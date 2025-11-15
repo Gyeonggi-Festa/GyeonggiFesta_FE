@@ -116,7 +116,7 @@ const MainpageLogin = () => {
             festivalName={festival.title}
             dateRange={`${festival.startDate} ~ ${festival.endDate}`}
             price={festival.isFree === '무료' ? '무료' : '유료'}
-            location={festival.isFree === "Y" ? "무료" : "유료"}
+            location={festival.isFree === "Y" ? "경기" : "경기"}
             likedDefault={festival.currentUserLike}
             mainImg={festival.mainImg}
             rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)
