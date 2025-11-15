@@ -127,7 +127,7 @@ const CardWrapper = styled.div<{ $background?: string }>`
     inset: 0;
   background: ${({ $background }) =>
       $background
-        ? ` url(${$background})`
+        ? `url("${$background}")`
         : 'none'};
     background-size: cover;
     background-repeat: no-repeat;

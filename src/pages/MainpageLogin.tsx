@@ -96,7 +96,7 @@ const MainpageLogin = () => {
   }, [hasMore]);
 
   return (
-    <div style={{ paddingBottom: '120px' }}>
+    <PageWrapper>
       <MainTopCardWrapper>
         <MainTopCard />
         <ButtonGroup>
@@ -129,13 +129,19 @@ const MainpageLogin = () => {
 
       {hasMore && <div ref={observerRef} style={{ height: '1px' }} />}
       <BottomNav />
-    </div>
+    </PageWrapper>
   );
 };
 
 export default MainpageLogin;
 
 // ───────── Styled Components ─────────
+
+const PageWrapper = styled.div`
+  padding-bottom: 120px;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+`;
 
 const FestivalCardWrapper = styled.div`
   padding-bottom: 50px;

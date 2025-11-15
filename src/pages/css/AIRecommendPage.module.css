@@ -1,6 +1,7 @@
 .wrapper {
     padding: 20px;
     background-color: #ffffff;
+    min-height: 100vh;
   }
   
   .header {
@@ -28,13 +29,29 @@
     font-size: 16px;
     font-weight: 600;
     color: #1a1a1a;
-    margin-bottom: 10px;
+  } 
+  
+  /* 콘텐츠 래퍼 - 회색 배경 영역 */
+  .contentWrapper {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 0 -20px;
+    padding: 20px 20px 100px 20px;
   }
   
   .sectionTitle {
     font-size: 16px;
     font-weight: 600;
     margin: 20px 0 10px;
+  }
+  
+  /* AI 추천 리스트 */
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
   }
   
   /* 추천 섹션: 세로 리스트 */
@@ -48,7 +65,8 @@
   .listGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    column-gap: 12px;
+    row-gap: 30px;
     
     margin-bottom: 70px;
   }

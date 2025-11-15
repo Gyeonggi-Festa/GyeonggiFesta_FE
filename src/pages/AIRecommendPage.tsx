@@ -79,10 +79,9 @@ const AIRecommendPage = () => {
         />
         <h2 className={styles.title}>AI 추천</h2>
       </div>
-
+      <div className={styles.contentWrapper}>
+        <div className={styles.list}>
       <p className={styles.subtitle}>고객님을 위한 AI 맞춤 제안</p>
-
-      <div className={styles.list}>
           {recommendData.length === 0 ? (
             <div className={styles.emptyMessage}>
               아직 AI 추천을 제공할 수 없습니다. 활동이 부족해요!
@@ -129,6 +128,7 @@ const AIRecommendPage = () => {
             />
           </motion.div>
         ))}
+      </div>
       </div>
       <BottomNav/>
     </motion.div>
