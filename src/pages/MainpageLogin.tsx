@@ -22,8 +22,7 @@ interface Festival {
   category: string;
   startDate: string;
   endDate: string;
-  isFree: '무료' | '유료' | string;
-  guName: string;
+  isFree: string;
   currentUserLike: boolean;
   mainImg?: string;
   rating?: number;      // ⭐ 평점 (optional - 없으면 랜덤 생성)
@@ -117,7 +116,7 @@ const MainpageLogin = () => {
             festivalName={festival.title}
             dateRange={`${festival.startDate} ~ ${festival.endDate}`}
             price={festival.isFree === '무료' ? '무료' : '유료'}
-            location={festival.guName}
+            location={festival.isFree === "Y" ? "무료" : "유료"}
             likedDefault={festival.currentUserLike}
             mainImg={festival.mainImg}
             rating={getRating(festival.eventId, festival.rating)} // 없을 경우 랜덤 생성 (1.0~5.0)

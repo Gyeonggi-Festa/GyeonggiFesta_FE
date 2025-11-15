@@ -9,7 +9,6 @@ interface CardItem {
   eventId: number;
   title: string;
   category: string;
-  guName: string;
   startDate: string;
   endDate: string;
   mainImg?: string;

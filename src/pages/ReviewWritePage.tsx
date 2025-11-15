@@ -124,7 +124,7 @@ export default function ReviewWritePage() {
                 </div>
                 <div className={styles.info}>
                  
-                    <span className={styles.gu}>{eventData?.guName ?? ""}</span>
+                    <span className={styles.gu}>{eventData?.isFree === "Y" ? "무료" : "유료"}</span>
                 </div>
                 <h1 className={styles.title}>{eventData?.title ?? "행사 제목 없음"}</h1>
             </div>

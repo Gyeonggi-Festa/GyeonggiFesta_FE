@@ -13,7 +13,7 @@ interface EventType {
   eventId: number;
   category: string;
   title: string;
-  guName: string;
+  isFree: string;
   startDate: string;
   endDate: string;
   status: 'NOT_STARTED' | 'IN_PROGRESS' | 'ENDED';
@@ -116,7 +116,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ onDateSelect }) => {
             key={event.eventId}
             category={event.category}
             title={event.title}
-            location={event.guName}
+            location={event.isFree === "Y" ? "무료" : "유료"}
             dateRange={`${event.startDate} ~ ${event.endDate}`}
             mainImg={event.mainImg}
             eventId={event.eventId}

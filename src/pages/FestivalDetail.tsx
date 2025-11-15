@@ -87,7 +87,7 @@ const [favoriteAnimation, setFavoriteAnimation] = useState(false);
     fee: data.useFee || (data.isFree === "Y" ? "무료" : "유료"),
     people: "정보 없음", // useTarget 필드 없음
     mask: "정보 없음", // player 필드 없음
-    buliding: data.orgName || "기관 정보 없음",
+    buliding: data.orgName || "기관 정보 없음", // orgName은 optional이므로 그대로 유지
   };
 
   const toggleLike = async () => {

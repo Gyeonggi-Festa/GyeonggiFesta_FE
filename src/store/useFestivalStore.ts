@@ -7,12 +7,10 @@ interface FestivalData {
   category: string;
   startDate: string;
   endDate: string;
-  place: string;
   lot: string;
   lat: string;
   mainImg: string;
   orgLink: string;
-  guName: string;
   introduce: string;
   useFee?: string;
   isFree?: string;

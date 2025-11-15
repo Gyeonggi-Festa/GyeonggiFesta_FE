@@ -10,7 +10,7 @@ interface CardItem {
   eventId: number;
   title: string;
   category: string;
-  guName: string;
+  isFree: string;
   startDate: string;
   endDate: string;
   mainImg: string;
@@ -98,7 +98,7 @@ const AIRecommendPage = () => {
                 <EventCard
                   category={item.category}
                   title={item.title}
-                  location={item.guName}
+                  location={item.isFree === "Y" ? "무료" : "유료"}
                   dateRange={formatDate(item.startDate, item.endDate)}
                   mainImg={item.mainImg || '/assets/default-card.jpg'}
                   eventId={item.eventId}

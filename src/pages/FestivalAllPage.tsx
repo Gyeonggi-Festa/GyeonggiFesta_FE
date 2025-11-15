@@ -10,7 +10,7 @@ interface EventType {
     eventId: number;
     category: string;
     title: string;
-    guName: string;
+    isFree: string;
     startDate: string;
     endDate: string;
     mainImg: string;
@@ -35,8 +35,7 @@ export default function FestivalAllPage() {
     
     // 검색 키워드 필터 (안전하게 처리)
     const keywordMatch = searchKeyword === '' || 
-      (event.title && event.title.toString().toLowerCase().includes(searchKeyword.toLowerCase())) ||
-      (event.guName && event.guName.toString().toLowerCase().includes(searchKeyword.toLowerCase()));
+      (event.title && event.title.toString().toLowerCase().includes(searchKeyword.toLowerCase()));
     
     return categoryMatch && keywordMatch;
   });
@@ -136,7 +135,7 @@ export default function FestivalAllPage() {
             key={event.eventId}
             category={event.category}
             title={event.title}
-            location={event.guName}
+            location={event.isFree === "Y" ? "무료" : "유료"}
             dateRange={`${event.startDate} ~ ${event.endDate}`}
             mainImg={event.mainImg}
             eventId={event.eventId}
