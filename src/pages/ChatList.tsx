@@ -45,7 +45,8 @@ const categories = [
 
 const Chat: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<'my' | 'unread' | 'group' | 'companion'>('my');
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [joinedVisibleCount, setJoinedVisibleCount] = useState(3);
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [showSearch, setShowSearch] = useState(false);
@@ -200,18 +201,20 @@ const Chat: React.FC = () => {
         ))}
       </div>
 
-      <div className={styles["chat-list"]}>
-        {filteredChats.map(chat => (
-          <Link
-            key={chat.id}
-            to={`/chat/room/${chat.id}`}
-            state={{ roomTitle: chat.name, participantCount: chat.participation }}
-            style={{ textDecoration: 'none' }}
-          >
-            <ChatItem {...chat} />
-          </Link>
-        ))}
-      </div>
+      {selectedMode !== 'group' && (
+        <div className={styles["chat-list"]}>
+          {filteredChats.map(chat => (
+            <Link
+              key={chat.id}
+              to={`/chat/room/${chat.id}`}
+              state={{ roomTitle: chat.name, participantCount: chat.participation }}
+              style={{ textDecoration: 'none' }}
+            >
+              <ChatItem {...chat} />
+            </Link>
+          ))}
+        </div>
+      )}
 
       {selectedMode === 'group' && (
         <motion.div
@@ -220,6 +223,44 @@ const Chat: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
+          {/* 내 채팅방 섹션 */}
+          {joinedGroupChats.length > 0 && (
+            <div className={styles["joined-chat-section"]}>
+              <h3 className={styles["group-chat-title"]}>참가중인 전체 채팅방</h3>
+              <div className={styles["group-chat-list"]}>
+                {joinedGroupChats.slice(0, joinedVisibleCount).map((chat, index) => (
+                  <div
+                    key={`joined-${chat.chatRoomId}-${index}`}
+                    onClick={() => {
+                      navigate(`/chat/room/${chat.chatRoomId}`, {
+                        state: {
+                          roomTitle: chat.name,
+                          participantCount: chat.participation,
+                        },
+                      });
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div style={{ pointerEvents: 'none' }}>
+                      <GroupChatItem {...chat} />
+                    </div>
+                  </div>
+                ))}
+
+                {joinedVisibleCount < joinedGroupChats.length && (
+                  <motion.button
+                    className={styles["load-more-button"]}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setJoinedVisibleCount(prev => prev + 3)}
+                  >
+                    더보기
+                  </motion.button>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className={styles["group-chat-header"]}>
             <h3 className={styles["group-chat-title"]}>전체 채팅방</h3>
             <div className={styles["search-area"]}>
@@ -261,7 +302,7 @@ const Chat: React.FC = () => {
 
           <div className={styles["group-chat-list"]}>
             {filteredGroupChats.slice(0, visibleCount).map((chat, index) => (
-              <GroupChatItem key={index} {...chat} />
+              <GroupChatItem key={`not-joined-${chat.chatRoomId}-${index}`} {...chat} />
             ))}
 
             {visibleCount < filteredGroupChats.length && (
@@ -269,7 +310,7 @@ const Chat: React.FC = () => {
                 className={styles["load-more-button"]}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setVisibleCount(prev => prev + 4)}
+                onClick={() => setVisibleCount(prev => prev + 3)}
               >
                 더보기
               </motion.button>

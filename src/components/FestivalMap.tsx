@@ -9,6 +9,18 @@ interface FestivalMapProps {
     orgName?: string;
 }
 
+// roadAddress에서 시 이름 추출 함수
+const extractCityName = (roadAddress: string): string => {
+    if (!roadAddress) return "";
+    const parts = roadAddress.split(" ");
+    // "경기 안양시 만안구..." 또는 "경기도 수원시 장안구..." 형식
+    // 두 번째 요소가 시 이름 (예: "안양시", "수원시")
+    if (parts.length >= 2) {
+        return parts[1];
+    }
+    return "";
+};
+
 export default function FestivalMap({ lat, lng, roadAddress = "", orgName = "" }: FestivalMapProps) {
     const position = {
         lat,
@@ -20,7 +32,8 @@ export default function FestivalMap({ lat, lng, roadAddress = "", orgName = "" }
     console.log("roadAddress", roadAddress);
     
     const handleParkingClick = () => {
-        navigate(`/map?gu=${encodeURIComponent(orgName || "")}&lat=${lat}&lng=${lng}`);
+        const cityName = extractCityName(roadAddress);
+        navigate(`/map?city=${encodeURIComponent(cityName)}&lat=${lat}&lng=${lng}`);
     };
       
     return (
