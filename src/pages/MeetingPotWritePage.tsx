@@ -129,7 +129,7 @@ const MeetingPotWritePage: React.FC = () => {
       setLoading(true);
 
       // 1. 게시글 생성
-      const postResponse = await axiosInstance.post('/api/auth/user/posts', {
+      const postData: any = {
         eventId: selectedEvent.eventId,
         title,
         content,
@@ -138,9 +138,17 @@ const MeetingPotWritePage: React.FC = () => {
         recruitmentTotal,
         recruitmentPeriodDays,
         preferredGender,
-        preferredMinAge,
-        preferredMaxAge,
-      });
+      };
+
+      // null이 아닌 경우에만 추가
+      if (preferredMinAge !== null) {
+        postData.preferredMinAge = preferredMinAge;
+      }
+      if (preferredMaxAge !== null) {
+        postData.preferredMaxAge = preferredMaxAge;
+      }
+
+      const postResponse = await axiosInstance.post('/api/auth/user/posts', postData);
 
       console.log('동행 게시글 등록 성공:', postResponse.data);
       

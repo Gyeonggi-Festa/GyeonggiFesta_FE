@@ -60,16 +60,11 @@ const formatAge = (minAge: number | null, maxAge: number | null): string => {
   return '연령 무관';
 };
 
-interface ChatRoom {
-  chatRoomId: number;
-  name: string;
-  createdFrom: string | null;
-  createdFromId: number | null;
-}
-
 const MeetingPotPage: React.FC = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -93,6 +88,7 @@ const MeetingPotPage: React.FC = () => {
         }
         
         console.log('추출된 게시글 목록:', content);
+        setAllPosts(content);
         setPosts(content);
       } catch (error) {
         console.error('게시글 목록 불러오기 실패:', error);
@@ -103,6 +99,18 @@ const MeetingPotPage: React.FC = () => {
     };
     fetchPosts();
   }, []);
+
+  // 검색어에 따라 게시글 필터링
+  useEffect(() => {
+    if (searchKeyword.trim() === '') {
+      setPosts(allPosts);
+    } else {
+      const filtered = allPosts.filter(post =>
+        post.title.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+      setPosts(filtered);
+    }
+  }, [searchKeyword, allPosts]);
 
   const handlePostClick = (postId: number) => {
     navigate(`/meetingpot/${postId}`);
@@ -128,6 +136,19 @@ const MeetingPotPage: React.FC = () => {
           onClick={() => navigate(-1)}
         />
         <h2 className={styles.title}>동행을 찾을땐, <span className={styles.highlight}>모임팟</span></h2>
+      </div>
+      
+      <div className={styles.searchContainer}>
+        <div className={styles.searchInputWrapper}>
+          <img src="/assets/search.svg" alt="검색" className={styles.searchIcon} />
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="동행을 검색해보세요"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+          />
+        </div>
       </div>
 
       {loading ? (

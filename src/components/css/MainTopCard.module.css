@@ -29,10 +29,9 @@
 /* 카드 위 오버레이 (텍스트 배경) */
 .cardOverlay {
   width: 100%;
-  padding: 24px;
+  padding: 26px;
   background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
   position: absolute;
-  bottom: 10px;  
   left: 0;
   color: white;
   text-align: left;

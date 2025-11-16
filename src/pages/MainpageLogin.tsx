@@ -207,7 +207,7 @@ const GradientButton = styled.button`
   border: none;
   background-color: #FFFFFF !important;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   transition: transform 0.2s;
@@ -284,25 +284,25 @@ const CategoryButton = styled.button`
   position: relative;
   overflow: hidden;
   
-  /* 교육 - 노란색→주황색 그라데이션 (연한 버전) */
+  /* 교육 - 빨강→주황 그라데이션 (연한 버전) - 행사와 교체 */
   &.education {
-    background: linear-gradient(135deg, #FFE066 0%, #FF8C5A 100%);
-  }
-  
-  /* 행사 - 빨강→주황 그라데이션 (연한 버전) */
-  &.event {
     background: linear-gradient(135deg, #FF6B8E 0%, #FF9D6B 100%);
   }
   
-  /* 전시 - 녹색→청록 그라데이션 (연한 버전) */
+  /* 행사 - 노란색→주황색 그라데이션 (연한 버전) - 교육과 교체 */
+  &.event {
+    background: linear-gradient(135deg, #FFE066 0%, #FF8C5A 100%);
+  }
+  
+  /* 전시 - 연주황 그라데이션 */
   &.exhibition {
-    background: linear-gradient(135deg, #6BFF9D 0%, #5AE6FF 100%);
+    background: linear-gradient(135deg, #FFD89B 0%, #47ff9d 100%);
   }
   
   /* 공연 - 파랑→주황 그라데이션 (연한 버전) */
   &.performance {
-    background: linear-gradient(135deg, #6B9AFF 0%, #FF8C6B 100%);
-  }
+    background: linear-gradient(135deg, #bdf8fd 0%, #94cef1 100%);
+  } 
   
   &:hover {
     transform: translateY(-2px);
@@ -315,7 +315,7 @@ const CategoryButton = styled.button`
 `;
 
 const CategoryLabel = styled.span`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: #FFFFFF;
   text-align: center;

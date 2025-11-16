@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './css/ChatList.module.css';
 import ChatItem from '../components/ChatItem';
@@ -38,6 +38,15 @@ interface GroupChatData {
   createdFromId?: number | null;
 }
 
+interface PostInfo {
+  postId: number;
+  eventTitle: string;
+  eventMainImage: string;
+  eventStartDate: string;
+  visitDates: string[];
+  title: string;
+}
+
 
 const categories = [
       '전체', '교육', '행사', '전시', '공연'
@@ -52,6 +61,9 @@ const Chat: React.FC = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [apiChatList, setApiChatList] = useState<ApiChatData[]>([]);
   const [groupChatList, setGroupChatList] = useState<GroupChatData[]>([]);
+  const [postInfoMap, setPostInfoMap] = useState<Map<number, PostInfo>>(new Map());
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const fetchChatList = async () => {
@@ -68,6 +80,43 @@ const Chat: React.FC = () => {
   
     fetchChatList();
   }, []);
+
+  // 모임팟 일정 정보 가져오기 (createdFrom === 'POST'인 채팅방의 게시글 정보)
+  useEffect(() => {
+    const fetchPostInfos = async () => {
+      const postRooms = apiChatList.filter((room) => room.createdFrom === 'POST' && room.createdFromId);
+      if (postRooms.length === 0) return;
+
+      const newPostInfoMap = new Map<number, PostInfo>();
+      
+      for (const room of postRooms) {
+        if (room.createdFromId) {
+          try {
+            const res = await axiosInstance.get(`/api/auth/user/posts/${room.createdFromId}`);
+            const postData = res.data?.data || res.data;
+            if (postData) {
+              newPostInfoMap.set(room.chatRoomId, {
+                postId: postData.postId,
+                eventTitle: postData.eventTitle || '',
+                eventMainImage: postData.eventMainImage || '/assets/default-card.jpg',
+                eventStartDate: postData.eventStartDate || '',
+                visitDates: postData.visitDates || [],
+                title: postData.title || '',
+              });
+            }
+          } catch (error) {
+            console.error(`게시글 ${room.createdFromId} 정보 가져오기 실패:`, error);
+          }
+        }
+      }
+      
+      setPostInfoMap(newPostInfoMap);
+    };
+
+    if (apiChatList.length > 0) {
+      fetchPostInfos();
+    }
+  }, [apiChatList]);
 
   useEffect(() => {
     const fetchGroupChatList = async () => {
@@ -207,6 +256,96 @@ const Chat: React.FC = () => {
           </motion.button>
         ))}
       </div>
+
+      {selectedMode === 'companion' && postRooms.filter((room) => postInfoMap.has(room.chatRoomId)).length > 0 && (
+        <div className={styles["meeting-pot-schedule-section"]}>
+          <h3 className={styles["schedule-title"]}>내 모임팟 일정</h3>
+          <div className={styles["schedule-slider-wrapper"]}>
+            <div 
+              className={styles["schedule-slider"]}
+              ref={sliderRef}
+              onScroll={() => {
+                if (sliderRef.current) {
+                  const scrollLeft = sliderRef.current.scrollLeft;
+                  const containerWidth = sliderRef.current.clientWidth;
+                  // 각 카드는 calc(100% - 24px) 너비이므로 실제 너비는 containerWidth - 24px
+                  const cardWidth = containerWidth - 24;
+                  const gap = 12;
+                  const cardFullWidth = cardWidth + gap;
+                  const index = Math.round(scrollLeft / cardFullWidth);
+                  const maxIndex = postRooms.filter((room) => postInfoMap.has(room.chatRoomId)).length - 1;
+                  setCurrentSlideIndex(Math.max(0, Math.min(index, maxIndex)));
+                }
+              }}
+            >
+              {postRooms
+                .filter((room) => postInfoMap.has(room.chatRoomId))
+                .map((room) => {
+                  const postInfo = postInfoMap.get(room.chatRoomId);
+                  if (!postInfo) return null;
+                  
+                  const formatDate = (dateStr: string) => {
+                    if (!dateStr) return '';
+                    const [yyyy, mm, dd] = dateStr.split('-');
+                    return `${yyyy.slice(2)}.${mm}.${dd}`;
+                  };
+
+                  // visitDates의 첫 번째 날짜 사용
+                  const visitDate = postInfo.visitDates && postInfo.visitDates.length > 0 
+                    ? postInfo.visitDates[0] 
+                    : postInfo.eventStartDate;
+
+                  return (
+                    <motion.div
+                      key={room.chatRoomId}
+                      className={styles["schedule-card"]}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        navigate(`/chat/room/${room.chatRoomId}`, {
+                          state: {
+                            roomTitle: room.name,
+                            participantCount: room.participation,
+                          },
+                        });
+                      }}
+                    >
+                      <div className={styles["schedule-image"]}>
+                        <img
+                          src={postInfo.eventMainImage}
+                          alt={postInfo.eventTitle}
+                        />
+                      </div>
+                      <div className={styles["schedule-info"]}>
+                        <div className={styles["schedule-category"]}>페스티벌</div>
+                        <div className={styles["schedule-event-title"]}>{postInfo.eventTitle}</div>
+                        <div className={styles["schedule-date"]}>
+                          <img src="/assets/detail/date.svg" alt="날짜" />
+                          {formatDate(visitDate)}
+                        </div>
+                        <div className={styles["schedule-post-title"]}>{postInfo.title}</div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+            </div>
+            {/* 슬라이드 인디케이터 */}
+            {postRooms.filter((room) => postInfoMap.has(room.chatRoomId)).length > 1 && (
+              <div className={styles["schedule-indicators"]}>
+                {postRooms
+                  .filter((room) => postInfoMap.has(room.chatRoomId))
+                  .map((_, index) => (
+                    <span
+                      key={index}
+                      className={`${styles["indicator-dot"]} ${
+                        index === currentSlideIndex ? styles["active"] : ''
+                      }`}
+                    />
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {selectedMode !== 'group' && (
         <div className={styles["chat-list"]}>

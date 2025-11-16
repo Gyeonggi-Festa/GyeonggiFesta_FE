@@ -4,6 +4,8 @@ import axiosInstance from '../api/axiosInstance';
 import styles from './css/MeetingPotDetailPage.module.css';
 import { motion } from 'framer-motion';
 import BottomNav from '../components/BottomNav';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import SuccessModal from '../components/SuccessModal';
 
 interface PostDetail {
   postId: number;
@@ -81,6 +83,8 @@ const MeetingPotDetailPage: React.FC = () => {
   const [post, setPost] = useState<PostDetail | null>(null);
   const [chatRoom, setChatRoom] = useState<ChatRoomInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPostDetail = async () => {
@@ -166,7 +170,13 @@ const MeetingPotDetailPage: React.FC = () => {
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate('/meetingpot')}
         />
-        <h2 className={styles.title}>동행 모집</h2>
+        <motion.img
+          src="/assets/more.svg"
+          alt="메뉴"
+          className={styles.menuIcon}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setIsDeleteModalOpen(true)}
+        />
       </div>
 
       <div className={styles.content}>
@@ -266,13 +276,28 @@ const MeetingPotDetailPage: React.FC = () => {
           >
             <button
               className={styles.chatButton}
-              onClick={() => {
-                navigate(`/chat/room/${chatRoom.chatRoomId}`, {
-                  state: {
-                    roomTitle: chatRoom.name,
-                    participantCount: chatRoom.participation,
-                  },
-                });
+              onClick={async () => {
+                try {
+                  // 채팅방 참여 API 호출
+                  await axiosInstance.post(`/api/auth/user/chatrooms/${chatRoom.chatRoomId}/join`);
+                  
+                  // STOMP 연결 및 입장 메시지 전송
+                  const { connectStomp, sendEnterMessage } = await import('../utils/socket');
+                  await connectStomp();
+                  sendEnterMessage(chatRoom.chatRoomId);
+                  
+                  // 채팅방으로 이동
+                  navigate(`/chat/room/${chatRoom.chatRoomId}`, {
+                    state: {
+                      roomTitle: chatRoom.name,
+                      participantCount: chatRoom.participation + 1, // 참여 후 인원 증가
+                    },
+                  });
+                } catch (error: any) {
+                  console.error('채팅방 참여 실패:', error);
+                  const errorMessage = error.response?.data?.message || '채팅방 참여에 실패했습니다.';
+                  alert(errorMessage);
+                }
               }}
             >
               <img src="/assets/chat-active.svg" alt="채팅" />
@@ -281,6 +306,32 @@ const MeetingPotDetailPage: React.FC = () => {
           </motion.div>
         )}
       </div>
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={async () => {
+          try {
+            await axiosInstance.delete(`/api/auth/user/posts/${postId}`);
+            setIsDeleteModalOpen(false);
+            setIsSuccessModalOpen(true);
+          } catch (error: any) {
+            console.error('게시글 삭제 실패:', error);
+            const errorMessage = error.response?.data?.message || '게시글 삭제에 실패했습니다.';
+            alert(errorMessage);
+            setIsDeleteModalOpen(false);
+          }
+        }}
+      />
+
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        message="게시글이 삭제되었습니다."
+        onClose={() => {
+          setIsSuccessModalOpen(false);
+          navigate('/meetingpot');
+        }}
+      />
 
       <BottomNav />
     </motion.div>
