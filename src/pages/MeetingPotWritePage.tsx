@@ -331,7 +331,8 @@ const MeetingPotWritePage: React.FC = () => {
             maxLength={MAX_TITLE_LENGTH}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="예: 경기 페스타 동행 구합니다"
+            placeholder="축제를 선택하면 자동으로 생성됩니다"
+            readOnly
           />
         </div>
         <div className={styles.charCount}>{title.length}/{MAX_TITLE_LENGTH}</div>

@@ -260,16 +260,27 @@ const CategorySection = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 24px;
-  padding: 24px 20px;
+  gap: 12px;
+  padding: 24px 12px;
   background-color: #f0f0f0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-top: -30px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  /* 스크롤바 숨기기 (선택사항) */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const CategoryButton = styled.button`
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: none;
   background-color: #FFFFFF;
@@ -315,7 +326,7 @@ const CategoryButton = styled.button`
 `;
 
 const CategoryLabel = styled.span`
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #FFFFFF;
   text-align: center;
