@@ -158,6 +158,13 @@ const Chat: React.FC = () => {
 
   const navigate = useNavigate();
   
+  // 내가 참가한 그룹 채팅방 목록 (createdFrom !== 'POST'인 것만)
+  const joinedGroupChats = groupChatList.filter(item => {
+    const isJoined = myGroupRoomIds.includes(item.chatRoomId);
+    const isNotFromPost = item.createdFrom !== 'POST';
+    return isJoined && isNotFromPost;
+  });
+  
   // 단체 채팅방: createdFrom !== 'POST'인 채팅방만 (단체 채팅방 생성 페이지에서 만든 것만)
   // 전체 채팅방 목록에서 가져오되, 내가 속한 채팅방은 제외하고 표시
   const filteredGroupChats = groupChatList.filter(item => {
