@@ -102,11 +102,11 @@ const MeetingPotDetailPage: React.FC = () => {
         const postData = res.data?.data || res.data;
         setPost(postData);
         
-        // 게시글과 연결된 채팅방 찾기
+        // 게시글과 연결된 채팅방 찾기 (전체 채팅방 목록에서 검색)
         try {
-          const chatListRes = await axiosInstance.get('/api/auth/user/my-chatrooms');
+          const chatListRes = await axiosInstance.get('/api/auth/user/chatrooms');
           const chatRooms = chatListRes.data?.data?.content || [];
-          console.log('내 채팅방 목록:', chatRooms);
+          console.log('전체 채팅방 목록:', chatRooms);
           
           // createdFrom이 'POST'이고 createdFromId가 현재 postId와 일치하는 채팅방 찾기
           const relatedChatRoom = chatRooms.find(
