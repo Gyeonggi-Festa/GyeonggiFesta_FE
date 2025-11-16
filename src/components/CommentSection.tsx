@@ -135,7 +135,7 @@ export default function CommentSection({ eventId }: CommentSectionProps) {
                     className={styles.chatButton}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStartChat(comment.username || '사용자', comment.verifyId);
+                      handleStartChat(comment.username || '사용자', comment.verifyId!);
                     }}
                   >
                     채팅하기
