@@ -1,72 +1,79 @@
-# GyeonggiFesta_FE
----
+아래는 수정된 프로젝트의 프론트엔드 아키텍처 요소를 기존 read.me 파일 양식에 맞게 삽입한 새 read.me 파일입니다. 
+
+***
 # 🎉 AI 축제 추천 서비스
 > **취향 기반 AI 추천 + 실시간 인기 축제 정보!**
 >
 > React + TypeScript 기반의 실시간 축제 탐색 서비스입니다.
----
+***
 ## 🧩 프로젝트 개요
 이 서비스는 사용자에게 맞춤형 축제 정보를 쉽고 빠르게 제공하기 위한 웹 애플리케이션입니다.
 **주요 기능:**
 * 🎯 AI 기반 취향 맞춤 축제 추천
 * 🔥 실시간 인기 축제 랭킹
 * 💬 축제 리뷰 및 실시간 채팅 기능
----
+***
 ## ⚙️ 기술 스택
 | 범주 | 기술 |
 | ------------ | ------------------------------------ |
-| **Frontend** | React, TypeScript |
-| **상태관리** | Zustand, React Query |
-| **라우팅** | React Router DOM |
-| **스타일링** | CSS Modules, Styled Components |
-| **서버 통신** | Axios, STOMP over WebSocket (SockJS) |
-| **이미지 최적화** | react-slick (lazyLoad) |
----
+| **Frontend** | React 18.2.0, TypeScript 5.7.2, Vite 6.2.0 |
+| **상태관리** | Zustand 5.0.3 (Immer 포함), React Query 5.90.8 |
+| **라우팅** | React Router DOM 7.4.1 |
+| **스타일링** | CSS Modules, Styled Components 6.1.17, 전역 CSS |
+| **서버 통신** | Axios 1.8.4 (인터셉터 패턴), STOMP over WebSocket (@stomp/stompjs 7.1.1, sockjs-client 1.6.1), Socket.io-client 4.8.1 |
+| **이미지 최적화** | react-slick 0.30.3 (lazyLoad) |
+| **애니메이션 및 UI** | Framer Motion 12.9.4, React Modal 3.16.3, React Calendar 5.1.0, React Kakao Maps SDK 1.1.27 |
+***
 ## 📐 TypeScript 도입 이유
 * 💡 **런타임 오류 사전 방지**: `CardItem`, `UserProfile` 등의 타입 정의를 통해 안전한 개발
 * 🛠️ **컴포넌트 안정성 강화**: `EventCard`, `FestivalDetail` 등의 Props를 명시적으로 정의
 * 🔐 **API 응답 보호**: `Array.isArray()`, 타입 가드를 활용해 서버 오류에도 안전하게 대응
----
+***
 ## 🚀 성능 최적화 전략
 | 전략 | 설명 | 기대 효과 |
 | ---------------- | -------------------------------- | ------------------- |
-| ✅ 병렬 데이터 호출 | `useQueries`를 통해 추천/인기 이벤트 동시 요청 | 최대 60% 로딩 시간 단축 |
+| ✅ 병렬 데이터 호출 | `useQueries`로 추천/인기 이벤트 동시 요청 | 최대 60% 로딩 시간 단축 |
 | ✅ 안전한 데이터 처리 | `Array.isArray()`로 서버 오류 대비 | 앱 크래시 방지 |
-| ✅ React Query 캐시 | 동일 요청 시 재사용 | 빠른 화면 전환 + 서버 부담 감소 |
+| ✅ React Query 캐시 | 서버 상태 캐싱 및 재사용 | 빠른 화면 전환 + 서버 부담 감소 |
 | ✅ 이미지 지연 로딩 | `react-slick`의 lazyLoad 적용 | 초기 트래픽 절감 |
 | ✅ 불필요 렌더링 방지 | 축제 데이터 없으면 컴포넌트 생략 | 렌더링 최적화 |
----
+| ✅ 코드 스플리팅 | Vite 자동 처리 | 초기 로드 시간 단축 |
+***
 ## 📊 최적화 전후 비교
 | 항목 | 최적화 전 | 최적화 후 | 효과 |
 | -------------- | ---------- | ------------- | ------------ |
-| 첫 화면 표시 시간 | 약 3초 | **1.6\~2.2초** | 빠른 첫 화면 노출 |
+| 첫 화면 표시 시간 | 약 3초 | **1.6~2.2초** | 빠른 첫 화면 노출 |
 | 모든 기능 사용 가능 시간 | 약 3.5초 | **2초대** | 사용자 즉시 조작 가능 |
-| 앱 내부 처리 시간 | 400\~600ms | **300ms 이하** | 부드러운 UI |
-| 이미지 트래픽 용량 | 3\~4MB | **1\~2MB** | 데이터 절감 |
+| 앱 내부 처리 시간 | 400~600ms | **300ms 이하** | 부드러운 UI |
+| 이미지 트래픽 용량 | 3~4MB | **1~2MB** | 데이터 절감 |
 | 오류 발생 가능성 | 있음 | **0%로 방지** | 앱 멈춤 걱정 없음 |
----
+***
 ## 🧪 주요 기능 스크린샷 (추후 이미지 삽입 가능)
 > 🔻 축제 추천 리스트
 > 🔻 실시간 인기 축제 랭킹
 > 🔻 채팅 및 리뷰 기능
----
+***
 ## 📁 프로젝트 구조
 ```
 📦 src
-├── api/ # Axios 인스턴스 및 API 함수
-├── components/ # 공통 컴포넌트 (Card, Header, Nav 등)
-├── pages/ # 주요 페이지 (MainPage, DetailPage 등)
-├── store/ # Zustand 상태관리
-├── utils/ # 공통 유틸 함수 (소켓, 날짜 포맷 등)
+├── api/ # Axios 인스턴스 및 API 함수 (인터셉터 패턴 적용)
+├── components/ # 재사용 가능한 UI 컴포넌트
+├── pages/ # 페이지 컴포넌트 (Container 역할)
+├── Layout/ # 공통 레이아웃 컴포넌트 (BackgroundLayout 포함)
+├── routes/ # 라우팅 설정 (React Router DOM, ProtectedRoute 패턴)
+├── store/ # Zustand 상태관리 (Immer 미들웨어, Factory 패턴 적용)
+├── utils/ # 유틸리티 함수 및 WebSocket 싱글톤 관리
 └── assets/ # 이미지 및 아이콘
 ```
----
+***
 ## 📬 향후 개선 방향
 * 📱 반응형 모바일 UI 최적화
 * 🧠 GPT 기반 자연어 축제 추천 기능 강화
 * 📈 관리자용 통계 대시보드 추가
----
+***
 ## 👏 기여자 및 참여자
 * **Frontend 개발**: 오준석, 서준하
----
+***
 # GyeonggiFesta_FE
+
+이처럼 기존 read.me 양식을 유지하면서 프론트엔드 아키텍처 요소와 관련된 내용을 상세하게 녹여 넣었습니다. 필요시 추가 수정 가능합니다.
