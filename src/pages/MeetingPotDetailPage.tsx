@@ -69,10 +69,17 @@ const formatAge = (minAge: number | null, maxAge: number | null): string => {
   return '연령 무관';
 };
 
+interface ChatRoomInfo {
+  chatRoomId: number;
+  name: string;
+  participation: number;
+}
+
 const MeetingPotDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { postId } = useParams<{ postId: string }>();
   const [post, setPost] = useState<PostDetail | null>(null);
+  const [chatRoom, setChatRoom] = useState<ChatRoomInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -90,6 +97,32 @@ const MeetingPotDetailPage: React.FC = () => {
         
         const postData = res.data?.data || res.data;
         setPost(postData);
+        
+        // 게시글과 연결된 채팅방 찾기
+        try {
+          const chatListRes = await axiosInstance.get('/api/auth/user/my-chatrooms');
+          const chatRooms = chatListRes.data?.data?.content || [];
+          console.log('내 채팅방 목록:', chatRooms);
+          
+          // createdFrom이 'POST'이고 createdFromId가 현재 postId와 일치하는 채팅방 찾기
+          const relatedChatRoom = chatRooms.find(
+            (room: any) => room.createdFrom === 'POST' && room.createdFromId === Number(postId)
+          );
+          
+          if (relatedChatRoom) {
+            setChatRoom({
+              chatRoomId: relatedChatRoom.chatRoomId,
+              name: relatedChatRoom.name,
+              participation: relatedChatRoom.participation || 0,
+            });
+            console.log('연결된 채팅방 찾음:', relatedChatRoom);
+          } else {
+            console.log('연결된 채팅방을 찾을 수 없습니다.');
+          }
+        } catch (chatError) {
+          console.error('채팅방 정보 가져오기 실패:', chatError);
+          // 채팅방 정보가 없어도 게시글은 표시
+        }
       } catch (error) {
         console.error('게시글 상세 불러오기 실패:', error);
         alert('게시글을 불러오는데 실패했습니다.');
@@ -222,6 +255,31 @@ const MeetingPotDetailPage: React.FC = () => {
             <span className={styles.infoValue}>{formatAge(post.preferredMinAge, post.preferredMaxAge)}</span>
           </div>
         </div>
+
+        {/* 채팅방 링크 */}
+        {chatRoom && (
+          <motion.div
+            className={styles.chatButtonSection}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <button
+              className={styles.chatButton}
+              onClick={() => {
+                navigate(`/chat/room/${chatRoom.chatRoomId}`, {
+                  state: {
+                    roomTitle: chatRoom.name,
+                    participantCount: chatRoom.participation,
+                  },
+                });
+              }}
+            >
+              <img src="/assets/chat-active.svg" alt="채팅" />
+              오픈채팅방 참여하기
+            </button>
+          </motion.div>
+        )}
       </div>
 
       <BottomNav />

@@ -143,6 +143,12 @@ const MeetingPotWritePage: React.FC = () => {
       });
 
       console.log('동행 게시글 등록 성공:', postResponse.data);
+      
+      // 게시글 ID 추출
+      const createdPostId = postResponse.data?.data?.postId || postResponse.data?.postId;
+      if (!createdPostId) {
+        console.error('게시글 ID를 받지 못했습니다.');
+      }
 
       // 2. 채팅방 생성 (visitDates의 첫 번째 날짜 사용)
       const eventDate = visitDates[0]; // 첫 번째 방문 예정일을 채팅방 날짜로 사용
@@ -164,6 +170,8 @@ const MeetingPotWritePage: React.FC = () => {
           information: content.length > 100 ? content.substring(0, 100) + '...' : content,
           category: selectedEvent.category,
           eventDate: eventDate,
+          createdFrom: 'POST',
+          createdFromId: createdPostId,
         });
 
         console.log('채팅방 생성 성공:', chatResponse.data);

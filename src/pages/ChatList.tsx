@@ -34,6 +34,8 @@ interface GroupChatData {
   information: string;
   participation: number;
   category: string;
+  createdFrom?: string | null;
+  createdFromId?: number | null;
 }
 
 
@@ -116,7 +118,7 @@ const Chat: React.FC = () => {
   
 
   
-  // 동행 채팅방 필터링 (createdFrom === 'POST')
+  // 동행 채팅방 필터링 (createdFrom === 'POST') - 모임팟에서 게시글 생성 시 생성된 오픈채팅방만
   const postRooms = apiChatList.filter((room) => room.createdFrom === 'POST');
   const companionChatData: ChatData[] = postRooms.map(chat => {
     let mode: 'my' | 'unread' | 'group';
@@ -139,19 +141,31 @@ const Chat: React.FC = () => {
     };
   });
 
+  // 내 채팅방: 내가 속한 단체 채팅방만 (type === 'GROUP')
+  const myChatRooms = chatData.filter(chat => chat.mode === 'group');
+
+  // 안 읽은 채팅방
+  const unreadChatRooms = chatData.filter(chat => chat.mode === 'unread');
+
   const filteredChats = selectedMode === 'my'
-    ? chatData.filter(chat => chat.mode === 'my' || chat.mode === 'group') // 안 읽은 채팅방 제외
+    ? myChatRooms // 내가 속한 단체 채팅방만
     : selectedMode === 'companion'
-    ? companionChatData
+    ? companionChatData // 동행 채팅방 (createdFrom === 'POST')
+    : selectedMode === 'unread'
+    ? unreadChatRooms
     : chatData.filter(chat => chat.mode === selectedMode);
 
   const navigate = useNavigate();
   
+  // 단체 채팅방: createdFrom !== 'POST'인 채팅방만 (단체 채팅방 생성 페이지에서 만든 것만)
+  // 전체 채팅방 목록에서 가져오되, 내가 속한 채팅방은 제외하고 표시
   const filteredGroupChats = groupChatList.filter(item => {
+    // createdFrom이 'POST'가 아닌 것만 (null이거나 다른 값)
+    const isNotFromPost = item.createdFrom !== 'POST';
     const matchCategory = selectedCategory === '전체' || item.category === selectedCategory;
     const matchKeyword = item.name.toLowerCase().includes(searchKeyword.toLowerCase());
     const notJoined = !myGroupRoomIds.includes(item.chatRoomId);
-    return matchCategory && matchKeyword && notJoined;
+    return isNotFromPost && matchCategory && matchKeyword && notJoined;
   });
   
 
@@ -168,7 +182,7 @@ const Chat: React.FC = () => {
       </div>
 
       <div className={styles["chat-filter-buttons"]}>
-        {['my', 'unread', 'group', 'companion'].map(mode => (
+        {['my', 'unread', 'companion', 'group'].map(mode => (
           <motion.button
             key={mode}
             whileHover={{ scale: 1.05 }}
@@ -179,8 +193,8 @@ const Chat: React.FC = () => {
             {{
               my: '내 채팅방',
               unread: '안 읽은 채팅방',
+              companion: '모임팟',
               group: '단체 채팅방',
-              companion: '동행채팅',
             }[mode]}
           </motion.button>
         ))}

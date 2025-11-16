@@ -127,7 +127,7 @@ const MeetingPotPage: React.FC = () => {
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate(-1)}
         />
-        <h2 className={styles.title}>동행 모집</h2>
+        <h2 className={styles.title}>동행을 찾을땐, <span className={styles.highlight}>모임팟</span></h2>
       </div>
 
       {loading ? (

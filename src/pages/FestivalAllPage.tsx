@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import CalendarModal from '../components/CalendarModal';
 import EventCard from '../components/EventCard';
 import axiosInstance from '../api/axiosInstance';
@@ -21,11 +22,15 @@ interface EventType {
 
 
 export default function FestivalAllPage() {
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [events, setEvents] = useState<EventType[]>([]);
   const weekDates = getWeekDays(selectedDate); // 월~일 등 일주일치
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedCategory, setSelectedCategory] = useState(
+    categoryParam && categories.includes(categoryParam) ? categoryParam : '전체'
+  );
   
   const [showSearch, setShowSearch] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');

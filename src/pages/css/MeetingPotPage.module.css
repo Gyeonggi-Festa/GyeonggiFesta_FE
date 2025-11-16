@@ -29,6 +29,13 @@
   margin: 0;
 }
 
+.highlight {
+  background: linear-gradient(90deg, #3977F4 77.4%, #5FC978 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .loading {
   display: flex;
   justify-content: center;
