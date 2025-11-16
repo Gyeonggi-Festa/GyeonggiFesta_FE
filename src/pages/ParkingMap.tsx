@@ -8,8 +8,11 @@ import { useNavigate } from 'react-router-dom';
 
 interface ParkingListItem {
   parkingId: string;
-  parkingName: string;
-  address: string;
+  name: string;
+  roadAddress: string;
+  lotnoAddress: string;
+  lat: number;
+  lon: number;
 }
 
 interface ParkingDetail {
@@ -34,12 +37,16 @@ interface ParkingDetail {
 interface Coords {
   lat: number;
   lng: number;
-  data: ParkingListItem;
+  data: {
+    parkingId: string;
+    parkingName: string;
+    address: string;
+  };
 }
 
 export default function ParkingMap() {
   const [searchParams] = useSearchParams();
-  const gu = searchParams.get('gu') || '강남구';
+  const city = searchParams.get('city') || '수원시';
   const navigate = useNavigate();
   const latParam = parseFloat(searchParams.get('lat') || '');
   const lngParam = parseFloat(searchParams.get('lng') || '');
@@ -56,27 +63,19 @@ export default function ParkingMap() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axiosInstance.get(`/api/auth/user/parking/map/${gu}`);
+        const res = await axiosInstance.get(`/api/auth/user/parking/map/${encodeURIComponent(city)}`);
         const items: ParkingListItem[] = res.data.data;
 
-        const geocoder = new window.kakao.maps.services.Geocoder();
-
-        const coordsWithLatLng: Coords[] = [];
-
-        for (const item of items) {
-          await new Promise<void>((resolve) => {
-            geocoder.addressSearch(item.address, (result, status) => {
-              if (status === window.kakao.maps.services.Status.OK) {
-                coordsWithLatLng.push({
-                  lat: parseFloat(result[0].y),
-                  lng: parseFloat(result[0].x),
-                  data: item,
-                });
-              }
-              resolve();
-            });
-          });
-        }
+        // API 응답에 lat, lon이 이미 포함되어 있으므로 geocoder 불필요
+        const coordsWithLatLng: Coords[] = items.map((item) => ({
+          lat: item.lat,
+          lng: item.lon,
+          data: {
+            parkingId: item.parkingId,
+            parkingName: item.name,
+            address: item.roadAddress,
+          },
+        }));
 
         setCoordsList(coordsWithLatLng);
         if (coordsWithLatLng.length > 0 && !hasCenterFromParams) {
@@ -89,11 +88,11 @@ export default function ParkingMap() {
     };
 
     fetchData();
-  }, [gu]);
+  }, [city, hasCenterFromParams]);
 
   const handleMarkerClick = async (parkingId: string) => {
     try {
-      const res = await axiosInstance.get(`/api/auth/user/parking/detail/${gu}/${parkingId}`);
+      const res = await axiosInstance.get(`/api/auth/user/parking/detail/${encodeURIComponent(city)}/${parkingId}`);
       setSelected(res.data.data);
     } catch (error) {
       console.error('상세 정보 불러오기 실패', error);
@@ -167,7 +166,7 @@ export default function ParkingMap() {
           data={selected} // detail 전체 응답
           onClose={() => setSelected(null)}
           onRefresh={async () => {
-            const res = await axiosInstance.get(`/api/auth/user/parking/detail/${gu}/${selected.parkingId}`);
+            const res = await axiosInstance.get(`/api/auth/user/parking/detail/${encodeURIComponent(city)}/${selected.parkingId}`);
             setSelected(res.data.data);
           }}
         />
