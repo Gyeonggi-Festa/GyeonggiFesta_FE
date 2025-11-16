@@ -1,4 +1,4 @@
-import Calendar from "react-calendar";
+import Calendar, { Value } from "react-calendar";
 import styles from "./css/CalendarModal.module.css";
 
 interface CalendarModalProps {
@@ -10,7 +10,7 @@ interface CalendarModalProps {
 }
 
 export default function CalendarModal({ onClose, onSelectDate, onError, minDate, maxDate }: CalendarModalProps) {
-  const handleDateChange = (value: Date) => {
+  const handleDateChange = (value: Value) => {
     if (value instanceof Date) {
       const today = new Date();
       today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 00:00:00으로 설정
