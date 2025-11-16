@@ -1,9 +1,6 @@
 import Calendar from "react-calendar";
 import styles from "./css/CalendarModal.module.css";
 
-// react-calendar의 Value 타입 정의
-type CalendarValue = Date | [Date, Date] | null;
-
 interface CalendarModalProps {
   onClose: () => void;
   onSelectDate: (value: Date) => void;
@@ -13,7 +10,7 @@ interface CalendarModalProps {
 }
 
 export default function CalendarModal({ onClose, onSelectDate, onError, minDate, maxDate }: CalendarModalProps) {
-  const handleDateChange = (value: CalendarValue) => {
+  const handleDateChange = (value: any) => {
     if (value instanceof Date) {
       const today = new Date();
       today.setHours(0, 0, 0, 0); // 오늘 날짜의 시간을 00:00:00으로 설정
