@@ -19,7 +19,21 @@ export default function ReviewItem({ reviewId, name, visitDate, content, mediaLi
   
   const myVerifyId = localStorage.getItem("verify_id"); // ✅ 내 ID 가져오기
   const isAuthor = myVerifyId === reviewAuthorVerifyId; // ✅ 비교
-  
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      try {
+        await axiosInstance.delete(`/api/auth/user/reviews/${reviewId}`);
+        alert("리뷰가 삭제되었습니다.");
+        onDelete?.();
+      } catch (err) {
+        console.error(err);
+        alert("리뷰 삭제에 실패했습니다.");
+      }
+    }
+  };
 
   return (
     <div className={styles.item}>
@@ -37,19 +51,7 @@ export default function ReviewItem({ reviewId, name, visitDate, content, mediaLi
         {isAuthor && (
           <button
             className={styles.deleteBtn}
-            onClick={async (e) => {
-              e.stopPropagation();
-              if (window.confirm("정말 삭제하시겠습니까?")) {
-                try {
-                  await axiosInstance.delete(`/api/auth/user/reviews/${reviewId}`);
-                  alert("리뷰가 삭제되었습니다.");
-                  onDelete?.();
-                } catch (err) {
-                  alert("삭제 실패");
-                  console.error(err);
-                }
-              }
-            }}
+            onClick={handleDelete}
           >
             삭제
           </button>

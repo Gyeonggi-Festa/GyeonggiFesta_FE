@@ -36,10 +36,24 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
         </div>
         
         <div className={styles.buttons}>
-          <button className={styles.cancelButton} onClick={onClose}>
+          <button 
+            className={styles.cancelButton} 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }}
+          >
             아니오
           </button>
-          <button className={styles.confirmButton} onClick={onConfirm}>
+          <button 
+            className={styles.confirmButton} 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onConfirm();
+            }}
+          >
             네
           </button>
         </div>

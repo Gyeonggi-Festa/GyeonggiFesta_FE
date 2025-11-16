@@ -31,16 +31,7 @@ const MeetingPotWritePage: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // 날짜 유효성 검사 (오늘 이후인지 확인)
-  const isValidDate = (dateStr: string): boolean => {
-    if (!dateStr) return false;
-    const selectedDate = new Date(dateStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    selectedDate.setHours(0, 0, 0, 0);
-    return selectedDate >= today;
-  };
+  const [eventSearchKeyword, setEventSearchKeyword] = useState('');
 
   // 날짜 포맷팅 (yyyy-MM-dd -> yyyy.MM.dd)
   const formatDateDisplay = (dateStr: string): string => {
@@ -53,11 +44,6 @@ const MeetingPotWritePage: React.FC = () => {
     const mm = String(value.getMonth() + 1).padStart(2, '0');
     const dd = String(value.getDate()).padStart(2, '0');
     const dateStr = `${yyyy}-${mm}-${dd}`;
-    
-    if (!isValidDate(dateStr)) {
-      alert('오늘 이후의 날짜를 선택해주세요.');
-      return;
-    }
 
     // 이미 선택된 날짜면 제거, 아니면 추가
     if (visitDates.includes(dateStr)) {
@@ -65,6 +51,11 @@ const MeetingPotWritePage: React.FC = () => {
     } else {
       setVisitDates([...visitDates, dateStr].sort());
     }
+  };
+
+  // 날짜 선택 에러 핸들러
+  const handleDateError = (message: string) => {
+    alert(message);
   };
 
   // 날짜 제거 핸들러
@@ -101,6 +92,16 @@ const MeetingPotWritePage: React.FC = () => {
     }
   }, [selectedEvent]);
 
+  // 축제 목록 필터링 (검색어 기준)
+  const filteredEvents = events.filter(event => {
+    if (!eventSearchKeyword.trim()) return true;
+    const keyword = eventSearchKeyword.toLowerCase();
+    return (
+      event.title.toLowerCase().includes(keyword) ||
+      (event.category && event.category.toLowerCase().includes(keyword))
+    );
+  });
+
   const isFormValid = 
     selectedEvent !== null &&
     title.trim() !== '' &&
@@ -125,14 +126,16 @@ const MeetingPotWritePage: React.FC = () => {
       return;
     }
 
+    let postData: any = null;
+    
     try {
       setLoading(true);
 
       // 1. 게시글 생성
-      const postData: any = {
+      postData = {
         eventId: selectedEvent.eventId,
-        title,
-        content,
+        title: title.trim(),
+        content: content.trim(),
         keyList: [],
         visitDates,
         recruitmentTotal,
@@ -148,6 +151,29 @@ const MeetingPotWritePage: React.FC = () => {
         postData.preferredMaxAge = preferredMaxAge;
       }
 
+      // 데이터 유효성 검사
+      if (!postData.title || postData.title.length === 0) {
+        alert('제목을 입력해주세요.');
+        setLoading(false);
+        return;
+      }
+      if (!postData.content || postData.content.length === 0) {
+        alert('내용을 입력해주세요.');
+        setLoading(false);
+        return;
+      }
+      if (!postData.visitDates || postData.visitDates.length === 0) {
+        alert('방문 예정일을 최소 1개 이상 선택해주세요.');
+        setLoading(false);
+        return;
+      }
+      if (!postData.eventId) {
+        alert('축제를 선택해주세요.');
+        setLoading(false);
+        return;
+      }
+
+      console.log('게시글 생성 요청 데이터:', postData);
       const postResponse = await axiosInstance.post('/api/auth/user/posts', postData);
 
       console.log('동행 게시글 등록 성공:', postResponse.data);
@@ -173,10 +199,13 @@ const MeetingPotWritePage: React.FC = () => {
       }
 
       try {
+        // category가 없거나 빈 문자열인 경우 기본값 설정
+        const category = selectedEvent.category || '기타';
+        
         const chatResponse = await axiosInstance.post('/api/auth/user/companion-chatrooms', {
           name: chatRoomName,
           information: content.length > 100 ? content.substring(0, 100) + '...' : content,
-          category: selectedEvent.category,
+          category: category,
           eventDate: eventDate,
           createdFrom: 'POST',
           createdFromId: createdPostId,
@@ -194,8 +223,10 @@ const MeetingPotWritePage: React.FC = () => {
       navigate('/meetingpot');
     } catch (error: any) {
       console.error('동행 게시글 등록 실패:', error);
-      const errorMessage = error.response?.data?.message || '게시글 등록에 실패했습니다. 다시 시도해주세요.';
-      alert(errorMessage);
+      console.error('에러 응답 상세:', error.response?.data);
+      console.error('요청 데이터:', postData);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || '게시글 등록에 실패했습니다. 다시 시도해주세요.';
+      alert(`게시글 등록 실패: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -237,28 +268,56 @@ const MeetingPotWritePage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className={styles.eventList}>
-              {events.length === 0 ? (
-                <div className={styles.emptyEvent}>로딩 중...</div>
-              ) : (
-                events.slice(0, 5).map((event) => (
-                  <div
-                    key={event.eventId}
-                    className={styles.eventItem}
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    <img
-                      src={event.mainImg || '/assets/default-card.jpg'}
-                      alt={event.title}
-                      className={styles.eventThumbnail}
-                    />
-                    <div className={styles.eventItemInfo}>
-                      <p className={styles.eventItemTitle}>{event.title}</p>
-                      <p className={styles.eventItemCategory}>{event.category}</p>
+            <div className={styles.eventSelectorContainer}>
+              {/* 축제 검색 입력 */}
+              <div className={styles.eventSearchBox}>
+                <input
+                  type="text"
+                  placeholder="축제 이름 또는 카테고리로 검색..."
+                  value={eventSearchKeyword}
+                  onChange={(e) => setEventSearchKeyword(e.target.value)}
+                  className={styles.eventSearchInput}
+                />
+              </div>
+              
+              {/* 축제 목록 (스크롤 가능) */}
+              <div className={styles.eventList}>
+                {events.length === 0 ? (
+                  <div className={styles.emptyEvent}>로딩 중...</div>
+                ) : filteredEvents.length === 0 ? (
+                  <div className={styles.emptyEvent}>검색 결과가 없습니다.</div>
+                ) : (
+                  filteredEvents.map((event) => (
+                    <div
+                      key={event.eventId}
+                      className={styles.eventItem}
+                      onClick={() => {
+                        // 축제 데이터 검증
+                        if (!event.eventId) {
+                          alert('유효하지 않은 축제입니다.');
+                          return;
+                        }
+                        if (!event.title || event.title.trim() === '') {
+                          alert('축제 제목이 없습니다.');
+                          return;
+                        }
+                        console.log('선택된 축제:', event);
+                        setSelectedEvent(event);
+                      }}
+                    >
+                      <img
+                        src={event.mainImg || '/assets/default-card.jpg'}
+                        alt={event.title}
+                        className={styles.eventThumbnail}
+                      />
+                      <div className={styles.eventItemInfo}>
+                        <p className={styles.eventItemTitle}>{event.title}</p>
+                        <p className={styles.eventItemCategory}>{event.category || '기타'}</p>
+                      </div>
                     </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -458,6 +517,8 @@ const MeetingPotWritePage: React.FC = () => {
         <CalendarModal
           onClose={() => setCalendarOpen(false)}
           onSelectDate={handleDateChange}
+          onError={handleDateError}
+          minDate={new Date()} // 오늘 이후만 선택 가능 (동행모집 글쓰기)
         />
       )}
 

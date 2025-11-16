@@ -7,6 +7,7 @@ import axiosInstance from "../api/axiosInstance";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import SuccessModal from "../components/SuccessModal";
 
 export default function ReviewWritePage() {
     const [review, setReview] = useState("");
@@ -16,12 +17,20 @@ export default function ReviewWritePage() {
     const [rating, setRating] = useState(0); // 별점: 0 ~ 5
     const { eventData } = useFestivalStore(); // ✅ Zustand 상태에서 데이터 가져오기
     const navigate = useNavigate();
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    
     const handleDateChange = (value: Date) => {
         const yyyy = value.getFullYear();
         const mm = String(value.getMonth() + 1).padStart(2, "0");
         const dd = String(value.getDate()).padStart(2, "0");
         setDate(`${yyyy}-${mm}-${dd}`);
         setCalendarOpen(false);
+    };
+
+    const handleDateError = (message: string) => {
+        setErrorMessage(message);
+        setIsErrorModalOpen(true);
     };
     const [searchParams] = useSearchParams();
     const eventId = searchParams.get("eventId"); // string | null
@@ -210,8 +219,17 @@ export default function ReviewWritePage() {
                 <CalendarModal
                     onClose={() => setCalendarOpen(false)}
                     onSelectDate={handleDateChange}
+                    onError={handleDateError}
+                    maxDate={new Date()} // 오늘 이전만 선택 가능 (리뷰 작성)
                 />
             )}
+
+            {/* 에러 모달 */}
+            <SuccessModal
+                isOpen={isErrorModalOpen}
+                message={errorMessage}
+                onClose={() => setIsErrorModalOpen(false)}
+            />
         </div>
     );
 }

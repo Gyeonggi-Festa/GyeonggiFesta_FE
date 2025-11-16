@@ -64,21 +64,90 @@ const Chat: React.FC = () => {
   const [postInfoMap, setPostInfoMap] = useState<Map<number, PostInfo>>(new Map());
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const previousChatListRef = useRef<ApiChatData[]>([]);
   
+  // 푸시 알림 권한 요청
   useEffect(() => {
-    const fetchChatList = async () => {
-      try {
-        const response = await axiosInstance.get('/api/auth/user/my-chatrooms');
-        setApiChatList(response.data.data.content); 
-        console.log("📋 내 채팅방 전체 응답:", response.data);
-        console.log("📋 채팅방 ID 목록:", response.data.data.content.map((c: ApiChatData) => c.chatRoomId));
-        // ❗ 서버 응답 구조에 따라 .data.data 조정 필요 (ex. 바로 배열이면 .data)
-      } catch (error) {
-        console.error('채팅방 리스트 가져오기 실패:', error);
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        console.log('알림 권한:', permission);
+      });
+    }
+  }, []);
+
+  const showNotification = (roomName: string, message: string) => {
+    // 현재 채팅방 페이지에 있으면 알림 표시 안 함
+    if (window.location.pathname.startsWith('/chat/room/')) {
+      return;
+    }
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(roomName, {
+        body: message,
+        icon: '/assets/favicon.svg',
+        badge: '/assets/favicon.svg',
+        requireInteraction: false,
+      });
+    }
+  };
+
+  const fetchChatList = async () => {
+    try {
+      const response = await axiosInstance.get('/api/auth/user/my-chatrooms');
+      const newChatList = response.data.data.content;
+      
+      // 이전 목록과 비교하여 새로운 메시지가 있는 채팅방 확인
+      if (previousChatListRef.current.length > 0) {
+        newChatList.forEach((newChat: ApiChatData) => {
+          const previousChat = previousChatListRef.current.find(
+            (prev) => prev.chatRoomId === newChat.chatRoomId
+          );
+          
+          // 새로운 메시지가 있고, 이전에 읽지 않은 메시지가 없었거나 더 많아진 경우
+          if (
+            previousChat &&
+            newChat.notReadMessageCount > 0 &&
+            (previousChat.notReadMessageCount === 0 || 
+             newChat.notReadMessageCount > previousChat.notReadMessageCount) &&
+            newChat.lastMessageText
+          ) {
+            // 현재 열려있는 채팅방이 아니면 알림 표시
+            const currentRoomId = window.location.pathname.split('/chat/room/')[1];
+            if (currentRoomId !== String(newChat.chatRoomId)) {
+              showNotification(newChat.name, newChat.lastMessageText);
+            }
+          }
+        });
       }
-    };
-  
+      
+      previousChatListRef.current = newChatList;
+      setApiChatList(newChatList); 
+      console.log("📋 내 채팅방 전체 응답:", response.data);
+      console.log("📋 채팅방 ID 목록:", newChatList.map((c: ApiChatData) => c.chatRoomId));
+      // ❗ 서버 응답 구조에 따라 .data.data 조정 필요 (ex. 바로 배열이면 .data)
+    } catch (error) {
+      console.error('채팅방 리스트 가져오기 실패:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchChatList();
+    
+    // 주기적으로 채팅방 목록 업데이트 (5초마다)
+    const intervalId = setInterval(() => {
+      fetchChatList();
+    }, 5000);
+
+    // 페이지가 포커스될 때마다 업데이트
+    const handleFocus = () => {
+      fetchChatList();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   // 모임팟 일정 정보 가져오기 (createdFrom === 'POST'인 채팅방의 게시글 정보)
@@ -192,7 +261,11 @@ const Chat: React.FC = () => {
   });
 
   // 내 채팅방: 내가 속한 단체 채팅방만 (type === 'GROUP')
-  const myChatRooms = chatData.filter(chat => chat.mode === 'group');
+  // 읽지 않은 메시지가 있어도 내 채팅방에 표시되도록 원본 apiChatList에서 필터링
+  const myChatRooms = chatData.filter(chat => {
+    const originalChat = apiChatList.find(ac => ac.chatRoomId === chat.id);
+    return originalChat?.type === 'GROUP';
+  });
 
   // 안 읽은 채팅방
   const unreadChatRooms = chatData.filter(chat => chat.mode === 'unread');

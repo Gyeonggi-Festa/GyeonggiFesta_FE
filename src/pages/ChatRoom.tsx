@@ -15,6 +15,8 @@ import {
   sendReadMessage,
 } from '../utils/socket';
 import axiosInstance from '../api/axiosInstance';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import SuccessModal from '../components/SuccessModal';
 
 interface ChatMessageData {
   id: number;
@@ -62,6 +64,35 @@ const ChatRoom: React.FC = () => {
   const { roomTitle, participantCount } = location.state || {};
   const [isOwner, setIsOwner] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // 햄버거 메뉴 열림 상태
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // 푸시 알림 권한 요청 및 알림 표시 함수
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        console.log('알림 권한:', permission);
+      });
+    }
+  }, []);
+
+  const showNotification = (title: string, body: string, roomId: string) => {
+    // 현재 페이지가 활성화되어 있고, 해당 채팅방에 있으면 알림 표시 안 함
+    if (document.hasFocus() && window.location.pathname.includes(`/chat/room/${roomId}`)) {
+      return;
+    }
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        body: body,
+        icon: '/assets/favicon.svg',
+        badge: '/assets/favicon.svg',
+        tag: `chat-${roomId}`, // 같은 채팅방의 알림은 덮어쓰기
+        requireInteraction: false,
+      });
+    }
+  };
   
   useEffect(() => {
     const initializeChatRoom = async () => {
@@ -237,8 +268,17 @@ const ChatRoom: React.FC = () => {
           },
         ]);
         
-        // 다른 사람의 메시지를 받으면 읽음 처리
+        // 다른 사람의 메시지를 받으면 읽음 처리 및 푸시 알림
         if (!isMyMessage && roomId) {
+          // 푸시 알림 표시
+          const notificationTitle = body.senderName || '알 수 없는 사용자';
+          const notificationBody = body.type === 'IMAGE' 
+            ? '이미지를 보냈습니다' 
+            : body.type === 'FILE' 
+            ? '파일을 보냈습니다' 
+            : displayContent;
+          showNotification(notificationTitle, notificationBody, roomId);
+          
           setTimeout(() => {
             sendReadMessage(Number(roomId));
           }, 300);
@@ -381,43 +421,54 @@ const ChatRoom: React.FC = () => {
         <div className={styles['menu-popup']}>
           {isOwner ? (
             <button
-              onClick={async () => {
-                if (window.confirm('정말 채팅방을 삭제하시겠습니까?')) {
-                  try {
-                    await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}`);
-                    alert('채팅방이 삭제되었습니다.');
-                    navigate('/chat');
-                  } catch (err: any) {
-                    console.error('채팅방 삭제 실패:', err);
-                    const errorMessage = err.response?.data?.message || '채팅방 삭제에 실패했습니다.';
-                    alert(errorMessage);
-                  }
-                }
-              }}
+              onClick={() => setIsDeleteModalOpen(true)}
             >
               채팅방 삭제
             </button>
           ) : (
             <button
-              onClick={async () => {
-                if (window.confirm('정말 채팅방에서 나가시겠습니까?')) {
-                  try {
-                    await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}/exit`);
-                    alert('채팅방에서 나갔습니다.');
-                    navigate('/chat');
-                  } catch (err: any) {
-                    console.error('채팅방 나가기 실패:', err);
-                    const errorMessage = err.response?.data?.message || '채팅방 나가기에 실패했습니다.';
-                    alert(errorMessage);
-                  }
-                }
-              }}
+              onClick={() => setIsDeleteModalOpen(true)}
             >
               채팅방 나가기
             </button>
           )}
         </div>
       )}
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={async () => {
+          try {
+            if (isOwner) {
+              await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}`);
+              setSuccessMessage('채팅방이 삭제되었습니다.');
+            } else {
+              await axiosInstance.delete(`/api/auth/user/chatrooms/${roomId}/exit`);
+              setSuccessMessage('채팅방에서 나갔습니다.');
+            }
+            setIsDeleteModalOpen(false);
+            setIsSuccessModalOpen(true);
+          } catch (err: any) {
+            console.error(isOwner ? '채팅방 삭제 실패:' : '채팅방 나가기 실패:', err);
+            const errorMessage = err.response?.data?.message || (isOwner ? '채팅방 삭제에 실패했습니다.' : '채팅방 나가기에 실패했습니다.');
+            setSuccessMessage(errorMessage);
+            setIsDeleteModalOpen(false);
+            setIsSuccessModalOpen(true);
+          }
+        }}
+      />
+
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        message={successMessage}
+        onClose={() => {
+          setIsSuccessModalOpen(false);
+          if (successMessage.includes('실패') === false) {
+            navigate('/chat');
+          }
+        }}
+      />
     </div>
     
   );
