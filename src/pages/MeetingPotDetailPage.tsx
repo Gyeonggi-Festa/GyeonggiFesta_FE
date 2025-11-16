@@ -266,46 +266,41 @@ const MeetingPotDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* 채팅방 링크 */}
-        {chatRoom && (
-          <motion.div
-            className={styles.chatButtonSection}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-          >
-            <button
-              className={styles.chatButton}
-              onClick={async () => {
-                try {
-                  // 채팅방 참여 API 호출
-                  await axiosInstance.post(`/api/auth/user/chatrooms/${chatRoom.chatRoomId}/join`);
-                  
-                  // STOMP 연결 및 입장 메시지 전송
-                  const { connectStomp, sendEnterMessage } = await import('../utils/socket');
-                  await connectStomp();
-                  sendEnterMessage(chatRoom.chatRoomId);
-                  
-                  // 채팅방으로 이동
-                  navigate(`/chat/room/${chatRoom.chatRoomId}`, {
-                    state: {
-                      roomTitle: chatRoom.name,
-                      participantCount: chatRoom.participation + 1, // 참여 후 인원 증가
-                    },
-                  });
-                } catch (error: any) {
-                  console.error('채팅방 참여 실패:', error);
-                  const errorMessage = error.response?.data?.message || '채팅방 참여에 실패했습니다.';
-                  alert(errorMessage);
-                }
-              }}
-            >
-              <img src="/assets/chat-active.svg" alt="채팅" />
-              오픈채팅방 참여하기
-            </button>
-          </motion.div>
-        )}
       </div>
+
+      {/* 채팅방 링크 - 하단 고정 */}
+      {chatRoom && (
+        <div className={styles.chatButtonSection}>
+          <button
+            className={styles.chatButton}
+            onClick={async () => {
+              try {
+                // 채팅방 참여 API 호출
+                await axiosInstance.post(`/api/auth/user/chatrooms/${chatRoom.chatRoomId}/join`);
+                
+                // STOMP 연결 및 입장 메시지 전송
+                const { connectStomp, sendEnterMessage } = await import('../utils/socket');
+                await connectStomp();
+                sendEnterMessage(chatRoom.chatRoomId);
+                
+                // 채팅방으로 이동
+                navigate(`/chat/room/${chatRoom.chatRoomId}`, {
+                  state: {
+                    roomTitle: chatRoom.name,
+                    participantCount: chatRoom.participation + 1, // 참여 후 인원 증가
+                  },
+                });
+              } catch (error: any) {
+                console.error('채팅방 참여 실패:', error);
+                const errorMessage = error.response?.data?.message || '채팅방 참여에 실패했습니다.';
+                alert(errorMessage);
+              }
+            }}
+          >
+            채팅
+          </button>
+        </div>
+      )}
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}

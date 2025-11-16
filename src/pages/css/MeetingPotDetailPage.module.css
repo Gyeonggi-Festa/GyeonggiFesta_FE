@@ -223,11 +223,15 @@
 }
 
 .chatButtonSection {
-  margin-top: 24px;
-  padding: 20px;
+  position: fixed;
+  bottom: 70px;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
   background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-top: 1px solid #e0e0e0;
+  z-index: 100;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .chatButton {
@@ -237,10 +241,10 @@
   justify-content: center;
   gap: 8px;
   padding: 16px;
-  background: linear-gradient(135deg, #487CEC, #345baa);
+  background: #487CEC;
   color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -248,12 +252,11 @@
 }
 
 .chatButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(72, 124, 236, 0.4);
+  background: #3a6dd4;
 }
 
 .chatButton:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .chatButton img {
