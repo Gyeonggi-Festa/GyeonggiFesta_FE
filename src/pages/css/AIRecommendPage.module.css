@@ -71,9 +71,38 @@
     margin-bottom: 70px;
   }
   .emptyMessage {
-  text-align: center;
-  color: #888;
-  padding: 40px 0;
-  font-size: 15px;
-  font-weight: 500;
-}
+    text-align: center;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .winkIcon {
+    width: 27px;
+    height: 27px;
+    flex-shrink: 0;
+  }
+
+  .emptyTitle {
+    color: #AAA;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%; /* 19.6px */
+    margin: 0;
+  }
+
+  .emptyDescription {
+    color: #AAA;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 140%; /* 16.8px */
+    margin: 0;
+  }

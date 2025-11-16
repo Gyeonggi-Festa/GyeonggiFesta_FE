@@ -84,7 +84,17 @@ const AIRecommendPage = () => {
       <p className={styles.subtitle}>고객님을 위한 AI 맞춤 제안</p>
           {recommendData.length === 0 ? (
             <div className={styles.emptyMessage}>
-              아직 AI 추천을 제공할 수 없습니다. 활동이 부족해요!
+              <img 
+                src="/assets/detail/wink.svg" 
+                alt="윙크" 
+                className={styles.winkIcon}
+              />
+              <p className={styles.emptyTitle}>아직 공부중이에요.</p>
+              <p className={styles.emptyDescription}>
+                아직 사용자에 대한 정보가 부족해요.<br />
+                스크랩, 좋아요를 많이 할수록<br />
+                더욱 정확한 결과를 얻을 수 있어요!
+              </p>
             </div>
           ) : (
             recommendData.map((item) => (
