@@ -21,11 +21,14 @@ const DeleteAccountPage: React.FC = () => {
         data: reason ? { reason } : undefined,
       });
 
-      if (response.status === 200) {
+      // API 응답 구조에 맞게 확인: { "code": "GEN-000", "status": 200 }
+      if (response.status === 200 && response.data?.code === 'GEN-000') {
         alert('계정이 성공적으로 삭제되었습니다.');
+        // 토큰 제거
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        navigate('/');
+        // 메인 페이지로 이동
+        navigate('/', { replace: true });
       } else {
         alert('탈퇴 처리에 실패했습니다. 다시 시도해주세요.');
       }
