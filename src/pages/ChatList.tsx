@@ -180,14 +180,13 @@ const Chat: React.FC = () => {
               });
             }
           } catch (error: any) {
-            // 400/404 에러 (게시글 삭제/유효하지 않음)는 완전히 무시
+            // 400/404 에러 (게시글 삭제/유효하지 않음)는 완전히 무시 (콘솔 출력도 하지 않음)
             if (error.response?.status === 400 || error.response?.status === 404) {
               // 실패한 게시글 ID 저장 (다음 요청에서 제외)
               failedPostIdsRef.current.add(room.createdFromId);
               continue;
             }
-            // 다른 에러만 로그 출력
-            console.error(`게시글 ${room.createdFromId} 정보 가져오기 실패:`, error);
+            // 다른 에러도 무시 (불필요한 콘솔 출력 방지)
           }
         }
       }
@@ -222,9 +221,14 @@ const Chat: React.FC = () => {
   const chatData: ChatData[] = Array.isArray(apiChatList)
   ? apiChatList.map(chat => {
       let mode: 'my' | 'unread' | 'group';
+      
+      // 내가 최근에 메시지를 보낸 채팅방인지 확인 (10초 이내)
+      const lastSentRooms = JSON.parse(localStorage.getItem('lastSentRooms') || '{}');
+      const lastSentTime = lastSentRooms[chat.chatRoomId];
+      const isRecentlySent = lastSentTime && (Date.now() - lastSentTime < 10000); // 10초 이내
 
-      // notReadMessageCount가 1 이상이면 무조건 안 읽은 채팅방으로 분류
-      if (chat.notReadMessageCount >= 1) {
+      // notReadMessageCount가 1 이상이고, 내가 최근에 메시지를 보내지 않았으면 안 읽은 채팅방으로 분류
+      if (chat.notReadMessageCount >= 1 && !isRecentlySent) {
         mode = 'unread';
       } else if (chat.type === "GROUP") {
         mode = 'group';
@@ -238,7 +242,7 @@ const Chat: React.FC = () => {
         participation: chat.participation,
         message: chat.lastMessageText || "메시지 없음",
         time: chat.lastMessageTime,
-        hasNotification: chat.notReadMessageCount >= 1,
+        hasNotification: chat.notReadMessageCount >= 1 && !isRecentlySent,
         mode,
       };
     })
@@ -256,8 +260,14 @@ const Chat: React.FC = () => {
   const companionChatData: ChatData[] = postRooms
     .map(chat => {
       let mode: 'my' | 'unread' | 'group';
-      // notReadMessageCount가 1 이상이면 무조건 안 읽은 채팅방으로 분류
-      if (chat.notReadMessageCount >= 1) {
+      
+      // 내가 최근에 메시지를 보낸 채팅방인지 확인 (10초 이내)
+      const lastSentRooms = JSON.parse(localStorage.getItem('lastSentRooms') || '{}');
+      const lastSentTime = lastSentRooms[chat.chatRoomId];
+      const isRecentlySent = lastSentTime && (Date.now() - lastSentTime < 10000); // 10초 이내
+      
+      // notReadMessageCount가 1 이상이고, 내가 최근에 메시지를 보내지 않았으면 안 읽은 채팅방으로 분류
+      if (chat.notReadMessageCount >= 1 && !isRecentlySent) {
         mode = 'unread';
       } else if (chat.type === "GROUP") {
         mode = 'group';
@@ -270,7 +280,7 @@ const Chat: React.FC = () => {
         participation: chat.participation,
         message: chat.lastMessageText || "메시지 없음",
         time: chat.lastMessageTime,
-        hasNotification: chat.notReadMessageCount >= 1,
+        hasNotification: chat.notReadMessageCount >= 1 && !isRecentlySent,
         mode,
       };
     })
@@ -465,7 +475,7 @@ const Chat: React.FC = () => {
           {/* 내 채팅방 섹션 */}
           {joinedGroupChats.length > 0 && (
             <div className={styles["joined-chat-section"]}>
-              <h3 className={styles["group-chat-title"]}>참가중인 전체 채팅방</h3>
+              <h3 className={styles["group-chat-title"]}>참가중인 단체 채팅방</h3>
               <div className={styles["group-chat-list"]}>
                 {joinedGroupChats.slice(0, joinedVisibleCount).map((chat, index) => (
                   <div

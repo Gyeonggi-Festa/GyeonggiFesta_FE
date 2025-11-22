@@ -132,9 +132,15 @@ const ChatRoom: React.FC = () => {
     return () => {
       if (roomId && stompConnectedRef.current) {
         console.log('🛑 채팅방 나가기 - STOMP 정리 시작');
+        sendReadMessage(Number(roomId));
         sendLeaveMessage(Number(roomId));
         disconnectStomp();
         stompConnectedRef.current = false;
+        
+        // 내가 채팅방을 나갈 때 읽음 상태로 표시
+        const lastSentRooms = JSON.parse(localStorage.getItem('lastSentRooms') || '{}');
+        lastSentRooms[roomId] = Date.now();
+        localStorage.setItem('lastSentRooms', JSON.stringify(lastSentRooms));
       }
     };
   }, [roomId]);
@@ -301,6 +307,12 @@ const ChatRoom: React.FC = () => {
     if (!inputValue.trim() || !roomId) return;
     sendChatMessage(Number(roomId), inputValue, 'TEXT');
     setInputValue('');
+    
+    // 내가 메시지를 보냈으므로, 이 채팅방은 읽음 상태로 표시
+    // ChatList에서 빨간점이 표시되지 않도록 localStorage에 저장
+    const lastSentRooms = JSON.parse(localStorage.getItem('lastSentRooms') || '{}');
+    lastSentRooms[roomId] = Date.now();
+    localStorage.setItem('lastSentRooms', JSON.stringify(lastSentRooms));
   };
 
   return (
@@ -312,8 +324,15 @@ const ChatRoom: React.FC = () => {
           className={styles['header-icon']}
           onClick={() => {
             if (roomId && stompConnectedRef.current) {
+              // 채팅방 나가기 전 읽음 처리
+              sendReadMessage(Number(roomId));
               sendLeaveMessage(Number(roomId));
               disconnectStomp();
+              
+              // 내가 채팅방을 나갈 때 읽음 상태로 표시
+              const lastSentRooms = JSON.parse(localStorage.getItem('lastSentRooms') || '{}');
+              lastSentRooms[roomId] = Date.now();
+              localStorage.setItem('lastSentRooms', JSON.stringify(lastSentRooms));
             }
             navigate('/chat');
           }}
