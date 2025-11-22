@@ -174,13 +174,13 @@ const Chat: React.FC = () => {
               });
             }
           } catch (error: any) {
-            // 400 에러 (게시글 삭제/유효하지 않음)는 조용히 무시
-            if (error.response?.status === 400) {
-              console.log(`게시글 ${room.createdFromId}을(를) 찾을 수 없습니다. (삭제되었을 수 있음)`);
-            } else {
-              // 다른 에러는 로그 출력
-              console.error(`게시글 ${room.createdFromId} 정보 가져오기 실패:`, error);
+            // 400/404 에러 (게시글 삭제/유효하지 않음)는 완전히 무시
+            if (error.response?.status === 400 || error.response?.status === 404) {
+              // 삭제된 게시글은 조용히 무시 (로그 출력 안 함)
+              continue;
             }
+            // 다른 에러만 로그 출력
+            console.error(`게시글 ${room.createdFromId} 정보 가져오기 실패:`, error);
           }
         }
       }
