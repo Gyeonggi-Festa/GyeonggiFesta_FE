@@ -366,16 +366,18 @@ const Chat: React.FC = () => {
 
   const navigate = useNavigate();
   
-  // 내가 참가한 그룹 채팅방 목록 (createdFrom !== 'POST'인 것만)
+  // 내가 참가한 그룹 채팅방 목록 (단체 채팅방 생성 페이지에서 만든 것만, 모임팟 제외)
   const joinedGroupChats = groupChatList.filter(item => {
     const isJoined = myGroupRoomIds.includes(item.chatRoomId);
+    // createdFrom이 'POST'가 아니거나 'GROUP'인 것만 (모임팟에서 생성된 채팅방 제외)
     const isNotFromPost = item.createdFrom !== 'POST';
     return isJoined && isNotFromPost;
   });
   
-  // 단체 채팅방: createdFrom !== 'POST'인 채팅방만 (단체 채팅방 생성 페이지에서 만든 것만)
+  // 단체 채팅방: 단체 채팅방 생성 페이지에서 만든 것만 (모임팟 제외)
   // 서버에서 이미 카테고리와 검색어로 필터링된 목록이 오므로, 내가 속한 채팅방만 제외
   const filteredGroupChats = groupChatList.filter(item => {
+    // createdFrom이 'POST'가 아닌 채팅방만 표시 (모임팟에서 생성된 채팅방 제외)
     const isNotFromPost = item.createdFrom !== 'POST';
     const notJoined = !myGroupRoomIds.includes(item.chatRoomId);
     return isNotFromPost && notJoined;

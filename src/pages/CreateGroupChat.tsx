@@ -23,6 +23,7 @@ const CreateGroupChat: React.FC = () => {
         type: 'GROUP',
         information: description,
         category: selectedCategory,
+        createdFrom: 'GROUP', // 단체 채팅방에서 생성된 것임을 명시
       });
   
       console.log('채팅방 생성 성공:', response.data);
