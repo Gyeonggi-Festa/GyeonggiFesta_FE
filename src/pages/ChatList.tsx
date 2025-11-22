@@ -65,6 +65,7 @@ const Chat: React.FC = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const previousChatListRef = useRef<ApiChatData[]>([]);
+  const failedPostIdsRef = useRef<Set<number>>(new Set()); // 실패한 게시글 ID 추적
   
   // 푸시 알림 권한 요청
   useEffect(() => {
@@ -160,6 +161,11 @@ const Chat: React.FC = () => {
       
       for (const room of postRooms) {
         if (room.createdFromId) {
+          // 이미 실패한 게시글은 다시 요청하지 않음
+          if (failedPostIdsRef.current.has(room.createdFromId)) {
+            continue;
+          }
+
           try {
             const res = await axiosInstance.get(`/api/auth/user/posts/${room.createdFromId}`);
             const postData = res.data?.data || res.data;
@@ -176,7 +182,8 @@ const Chat: React.FC = () => {
           } catch (error: any) {
             // 400/404 에러 (게시글 삭제/유효하지 않음)는 완전히 무시
             if (error.response?.status === 400 || error.response?.status === 404) {
-              // 삭제된 게시글은 조용히 무시 (로그 출력 안 함)
+              // 실패한 게시글 ID 저장 (다음 요청에서 제외)
+              failedPostIdsRef.current.add(room.createdFromId);
               continue;
             }
             // 다른 에러만 로그 출력
@@ -237,44 +244,51 @@ const Chat: React.FC = () => {
     })
   : [];
 
+  // 내가 속한 단체 채팅방 ID 목록 (모임팟 제외)
   const myGroupRoomIds = apiChatList
-  .filter((chat) => chat.type === 'GROUP')
+  .filter((chat) => chat.type === 'GROUP' && chat.createdFrom !== 'POST')
   .map((chat) => chat.chatRoomId);
   
 
   
   // 동행 채팅방 필터링 (createdFrom === 'POST') - 모임팟에서 게시글 생성 시 생성된 오픈채팅방만
   const postRooms = apiChatList.filter((room) => room.createdFrom === 'POST');
-  const companionChatData: ChatData[] = postRooms.map(chat => {
-    let mode: 'my' | 'unread' | 'group';
-    // notReadMessageCount가 1 이상이면 무조건 안 읽은 채팅방으로 분류
-    if (chat.notReadMessageCount >= 1) {
-      mode = 'unread';
-    } else if (chat.type === "GROUP") {
-      mode = 'group';
-    } else {
-      mode = 'my';
-    }
-    return {
-      id: chat.chatRoomId,
-      name: chat.name,
-      participation: chat.participation,
-      message: chat.lastMessageText || "메시지 없음",
-      time: chat.lastMessageTime,
-      hasNotification: chat.notReadMessageCount >= 1,
-      mode,
-    };
-  });
+  const companionChatData: ChatData[] = postRooms
+    .map(chat => {
+      let mode: 'my' | 'unread' | 'group';
+      // notReadMessageCount가 1 이상이면 무조건 안 읽은 채팅방으로 분류
+      if (chat.notReadMessageCount >= 1) {
+        mode = 'unread';
+      } else if (chat.type === "GROUP") {
+        mode = 'group';
+      } else {
+        mode = 'my';
+      }
+      return {
+        id: chat.chatRoomId,
+        name: chat.name,
+        participation: chat.participation,
+        message: chat.lastMessageText || "메시지 없음",
+        time: chat.lastMessageTime,
+        hasNotification: chat.notReadMessageCount >= 1,
+        mode,
+      };
+    })
+    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()); // 최신순 정렬
 
-  // 내 채팅방: 내가 속한 단체 채팅방만 (type === 'GROUP')
+  // 내 채팅방: 내가 속한 단체 채팅방만 (type === 'GROUP', 모임팟 제외)
   // 읽지 않은 메시지가 있어도 내 채팅방에 표시되도록 원본 apiChatList에서 필터링
-  const myChatRooms = chatData.filter(chat => {
-    const originalChat = apiChatList.find(ac => ac.chatRoomId === chat.id);
-    return originalChat?.type === 'GROUP';
-  });
+  const myChatRooms = chatData
+    .filter(chat => {
+      const originalChat = apiChatList.find(ac => ac.chatRoomId === chat.id);
+      return originalChat?.type === 'GROUP' && originalChat?.createdFrom !== 'POST';
+    })
+    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()); // 최신순 정렬
 
-  // 안 읽은 채팅방
-  const unreadChatRooms = chatData.filter(chat => chat.mode === 'unread');
+  // 안 읽은 채팅방 (최신순 정렬)
+  const unreadChatRooms = chatData
+    .filter(chat => chat.mode === 'unread')
+    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 
   const filteredChats = selectedMode === 'my'
     ? myChatRooms // 내가 속한 단체 채팅방만
