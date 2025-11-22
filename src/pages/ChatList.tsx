@@ -54,7 +54,6 @@ const categories = [
 
 const Chat: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<'my' | 'unread' | 'group' | 'companion'>('my');
-  const [visibleCount, setVisibleCount] = useState(3);
   const [joinedVisibleCount, setJoinedVisibleCount] = useState(3);
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
