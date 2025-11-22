@@ -108,7 +108,7 @@ export default function ParkingMap() {
           className={styles.icon} 
           onClick={() => navigate(-1)}
         />
-        <div className={styles.title}>지도 자세히 보기</div>
+        <div className={styles.title}>근처 주차시설 조회하기</div>
         <div className={styles.placeholder} />
       </div>
       {coordsList.length > 0 && !selected && (

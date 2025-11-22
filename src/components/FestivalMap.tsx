@@ -77,8 +77,8 @@ export default function FestivalMap({ lat, lng, roadAddress = "", orgName = "" }
             </Map>
 
             <div className={styles.parkingBox} onClick={handleParkingClick}>
-                <img src="/assets/detail/glass.svg" alt="돋보기 아이콘"/>
-                <span>지도 자세히 보기</span>
+                <img src="/assets/detail/parking.svg" alt="돋보기 아이콘"/>
+                <span>근처 주차시설 조회하기</span>
                 <img src="/assets/detail/slash.svg" alt="구분선"/>
             </div>
         </div>
