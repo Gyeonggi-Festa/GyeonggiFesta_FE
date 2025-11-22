@@ -23,14 +23,20 @@ interface ChatMessageData {
   sender: 'me' | 'other';
   message: string;
   time: string;
+  senderName?: string;
+  isDeleted?: boolean;
 }
 interface RawMessage {
   messageId: number;
   senderVerifyId?: string;
   senderId?: number;
+  senderName?: string;
   memberId?: number;
   content: string;
   createdAt: string;
+  type?: 'TEXT' | 'IMAGE' | 'FILE';
+  mediaUrl?: string;
+  deleted?: boolean;
 }
 
 interface WebSocketMessage {
@@ -159,14 +165,27 @@ const ChatRoom: React.FC = () => {
             msg.memberId === memberId || 
             msg.senderId === memberId
           );
+          
+          // 삭제된 메시지 처리
+          let displayContent = msg.content;
+          if (msg.deleted) {
+            displayContent = '삭제된 메시지입니다.';
+          } else if (msg.type === 'IMAGE' && msg.mediaUrl) {
+            displayContent = `[이미지: ${msg.mediaUrl}]`;
+          } else if (msg.type === 'FILE' && msg.mediaUrl) {
+            displayContent = `[파일: ${msg.content}]`;
+          }
+          
           return {
             id: msg.messageId,
             sender: isMyMessage ? 'me' : 'other',
-            message: msg.content,
+            message: displayContent,
             time: new Date(msg.createdAt).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
             }),
+            senderName: msg.senderName,
+            isDeleted: msg.deleted || false,
           };
         });
     
@@ -271,6 +290,8 @@ const ChatRoom: React.FC = () => {
               hour: '2-digit',
               minute: '2-digit',
             }),
+            senderName: body.senderName,
+            isDeleted: body.isDeleted || false,
           },
         ]);
         
@@ -393,6 +414,8 @@ const ChatRoom: React.FC = () => {
             sender={chat.sender}
             message={chat.message}
             time={chat.time}
+            senderName={chat.senderName}
+            isDeleted={chat.isDeleted}
           />
         ))}
       </div>

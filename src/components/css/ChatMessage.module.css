@@ -64,4 +64,19 @@
   .chatroom-other-message .chatroom-message-time {
     right: -35px;
   }
+
+  /* 발신자 이름 스타일 */
+  .chatroom-sender-name {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    font-weight: 500;
+  }
+
+  /* 삭제된 메시지 스타일 */
+  .chatroom-deleted-message {
+    font-style: italic;
+    color: #999 !important;
+  }
   

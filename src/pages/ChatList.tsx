@@ -63,9 +63,28 @@ const Chat: React.FC = () => {
   const [groupChatList, setGroupChatList] = useState<GroupChatData[]>([]);
   const [postInfoMap, setPostInfoMap] = useState<Map<number, PostInfo>>(new Map());
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMoreGroups, setHasMoreGroups] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
   const previousChatListRef = useRef<ApiChatData[]>([]);
-  const failedPostIdsRef = useRef<Set<number>>(new Set()); // 실패한 게시글 ID 추적
+  
+  // 실패한 게시글 ID를 localStorage에 저장하여 영구적으로 유지
+  const getFailedPostIds = (): Set<number> => {
+    try {
+      const saved = localStorage.getItem('failedPostIds');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  };
+  
+  const saveFailedPostId = (postId: number) => {
+    const failedIds = getFailedPostIds();
+    failedIds.add(postId);
+    localStorage.setItem('failedPostIds', JSON.stringify([...failedIds]));
+  };
+  
+  const failedPostIdsRef = useRef<Set<number>>(getFailedPostIds());
   
   // 푸시 알림 권한 요청
   useEffect(() => {
@@ -180,10 +199,12 @@ const Chat: React.FC = () => {
               });
             }
           } catch (error: any) {
-            // 400/404 에러 (게시글 삭제/유효하지 않음)는 완전히 무시 (콘솔 출력도 하지 않음)
+            // 400/404 에러 (게시글 삭제/유효하지 않음)는 완전히 무시
             if (error.response?.status === 400 || error.response?.status === 404) {
-              // 실패한 게시글 ID 저장 (다음 요청에서 제외)
+              // 실패한 게시글 ID를 ref와 localStorage 모두에 저장
               failedPostIdsRef.current.add(room.createdFromId);
+              saveFailedPostId(room.createdFromId);
+              console.log(`🗑️ 삭제된 게시글 ID ${room.createdFromId} - 더 이상 요청하지 않습니다.`);
               continue;
             }
             // 다른 에러도 무시 (불필요한 콘솔 출력 방지)
@@ -199,24 +220,60 @@ const Chat: React.FC = () => {
     }
   }, [apiChatList]);
 
-  useEffect(() => {
-    const fetchGroupChatList = async () => {
-      try {
-        const response = await axiosInstance.get('/api/auth/user/chatrooms');
-        const content = response.data.data?.content;
-        if (Array.isArray(content)) {
-          setGroupChatList(content);
-        } else {
-          console.error('그룹 채팅방 데이터가 배열이 아닙니다:', content);
-          setGroupChatList([]);
-        }
-      } catch (error) {
-        console.error('그룹 채팅방 리스트 가져오기 실패:', error);
+  // 그룹 채팅방 목록 조회 (카테고리, 검색어, 페이지네이션 적용)
+  const fetchGroupChatList = async (reset: boolean = false) => {
+    try {
+      const pageToFetch = reset ? 0 : currentPage;
+      const params: any = {
+        page: pageToFetch + 1, // API는 1부터 시작
+        size: 10,
+      };
+      
+      // 검색 키워드가 있으면 추가
+      if (searchKeyword.trim()) {
+        params.keyword = searchKeyword.trim();
       }
-    };
-  
-    fetchGroupChatList();
-  }, []);
+      
+      // 카테고리별 API 호출
+      let apiUrl = '/api/auth/user/chatrooms';
+      if (selectedCategory !== '전체') {
+        apiUrl = `/api/auth/user/chatrooms/${encodeURIComponent(selectedCategory)}`;
+      }
+      
+      const response = await axiosInstance.get(apiUrl, { params });
+      const content = response.data.data?.content || [];
+      const pageInfo = response.data.data?.page;
+      
+      if (Array.isArray(content)) {
+        if (reset) {
+          setGroupChatList(content);
+          setCurrentPage(0);
+        } else {
+          setGroupChatList(prev => [...prev, ...content]);
+        }
+        
+        // 더 불러올 데이터가 있는지 확인
+        if (pageInfo) {
+          const hasMore = pageInfo.number < pageInfo.totalPages - 1;
+          setHasMoreGroups(hasMore);
+        }
+      } else {
+        console.error('그룹 채팅방 데이터가 배열이 아닙니다:', content);
+        if (reset) setGroupChatList([]);
+      }
+    } catch (error) {
+      console.error('그룹 채팅방 리스트 가져오기 실패:', error);
+      if (reset) setGroupChatList([]);
+    }
+  };
+
+  // 카테고리나 검색어가 변경되면 목록 초기화 후 재조회
+  useEffect(() => {
+    if (selectedMode === 'group') {
+      setCurrentPage(0);
+      fetchGroupChatList(true);
+    }
+  }, [selectedCategory, searchKeyword, selectedMode]);
   
   const chatData: ChatData[] = Array.isArray(apiChatList)
   ? apiChatList.map(chat => {
@@ -318,14 +375,11 @@ const Chat: React.FC = () => {
   });
   
   // 단체 채팅방: createdFrom !== 'POST'인 채팅방만 (단체 채팅방 생성 페이지에서 만든 것만)
-  // 전체 채팅방 목록에서 가져오되, 내가 속한 채팅방은 제외하고 표시
+  // 서버에서 이미 카테고리와 검색어로 필터링된 목록이 오므로, 내가 속한 채팅방만 제외
   const filteredGroupChats = groupChatList.filter(item => {
-    // createdFrom이 'POST'가 아닌 것만 (null이거나 다른 값)
     const isNotFromPost = item.createdFrom !== 'POST';
-    const matchCategory = selectedCategory === '전체' || item.category === selectedCategory;
-    const matchKeyword = item.name.toLowerCase().includes(searchKeyword.toLowerCase());
     const notJoined = !myGroupRoomIds.includes(item.chatRoomId);
-    return isNotFromPost && matchCategory && matchKeyword && notJoined;
+    return isNotFromPost && notJoined;
   });
   
 
@@ -550,16 +604,19 @@ const Chat: React.FC = () => {
           </div>
 
           <div className={styles["group-chat-list"]}>
-            {filteredGroupChats.slice(0, visibleCount).map((chat, index) => (
+            {filteredGroupChats.map((chat, index) => (
               <GroupChatItem key={`not-joined-${chat.chatRoomId}-${index}`} {...chat} />
             ))}
 
-            {visibleCount < filteredGroupChats.length && (
+            {hasMoreGroups && (
               <motion.button
                 className={styles["load-more-button"]}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setVisibleCount(prev => prev + 3)}
+                onClick={() => {
+                  setCurrentPage(prev => prev + 1);
+                  fetchGroupChatList(false);
+                }}
               >
                 더보기
               </motion.button>
