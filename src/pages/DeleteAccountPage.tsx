@@ -17,10 +17,10 @@ const DeleteAccountPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // DELETE 메소드로 요청
-      const response = await axiosInstance.delete('/api/auth/user/exit', {
-        data: reason ? { reason } : undefined,
-      });
+      // POST 메소드로 요청
+      const response = await axiosInstance.post('/api/auth/user/exit', 
+        reason ? { reason } : {}
+      );
 
       // API 응답 구조에 맞게 확인: { "code": "GEN-000", "status": 200 }
       if (response.status === 200 && response.data?.code === 'GEN-000') {
