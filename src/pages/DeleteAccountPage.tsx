@@ -17,10 +17,19 @@ const DeleteAccountPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // POST 메소드로 요청
-      const response = await axiosInstance.post('/api/auth/user/exit', 
-        reason ? { reason } : {}
-      );
+      // 디버깅: 요청 정보 출력
+      const token = localStorage.getItem('access_token');
+      console.log('🔍 탈퇴 요청 시작');
+      console.log('📍 엔드포인트:', 'https://api.gyeonggifesta.site/api/auth/user/exit');
+      console.log('🔑 토큰 존재 여부:', !!token);
+      console.log('📝 탈퇴 사유:', reason || '없음');
+
+      // DELETE 메소드로 요청
+      const response = await axiosInstance.delete('/api/auth/user/exit', {
+        data: reason ? { reason } : undefined,
+      });
+
+      console.log('✅ 탈퇴 응답 성공:', response);
 
       // API 응답 구조에 맞게 확인: { "code": "GEN-000", "status": 200 }
       if (response.status === 200 && response.data?.code === 'GEN-000') {
@@ -34,7 +43,15 @@ const DeleteAccountPage: React.FC = () => {
         alert('탈퇴 처리에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (error: any) {
-      console.error('탈퇴 요청 실패:', error);
+      console.error('❌ 탈퇴 요청 실패:', error);
+      console.error('📍 요청 URL:', error.config?.url);
+      console.error('📍 전체 URL:', error.config?.baseURL + error.config?.url);
+      console.error('🔧 요청 메서드:', error.config?.method);
+      console.error('📦 요청 데이터:', error.config?.data);
+      console.error('🔑 요청 헤더:', error.config?.headers);
+      console.error('📥 응답 상태:', error.response?.status);
+      console.error('📥 응답 데이터:', error.response?.data);
+      
       const errorMessage = error.response?.data?.message || '서버 오류로 탈퇴에 실패했습니다.';
       alert(errorMessage);
     } finally {
