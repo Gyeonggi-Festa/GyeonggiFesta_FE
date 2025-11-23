@@ -18,6 +18,7 @@ import MyReviewPage from '../pages/MyReviewPage'
 import TermsPage from '../pages/TermsPage'
 import DeleteAccountPage from '../pages/DeleteAccountPage'
 import AuthRedirect from '../pages/AuthRedirect'
+import LoginFailedPage from '../pages/LoginFailedPage'
 import EditProfilePage from '../pages/EditProfilePage'
 import FestivalAllPage from '../pages/FestivalAllPage'
 import FestivalDetail from '../pages/FestivalDetail'
@@ -130,6 +131,7 @@ export const router = createBrowserRouter([
     )
   },
   { path: '/login-success', element: <AuthRedirect /> },
+  { path: '/login-failed', element: <LoginFailedPage /> },
   { 
     path: '/fest/all', 
     element: <FestivalAllPage />

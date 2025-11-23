@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.content {
+  background: white;
+  border-radius: 20px;
+  padding: 60px 40px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.iconWrapper {
+  margin-bottom: 24px;
+}
+
+.icon {
+  font-size: 64px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+
+.message {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.retryButton {
+  width: 100%;
+  padding: 16px;
+  background: #fee500;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #191919;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover {
+  background: #fdd835;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(254, 229, 0, 0.3);
+}
+
+.retryButton:active {
+  transform: translateY(0);
+}
+

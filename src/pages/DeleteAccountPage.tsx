@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import styles from './css/DeleteAccountPage.module.css';
 import axiosInstance from '../api/axiosInstance';
-import { useNavigate } from 'react-router-dom';
 
 const DeleteAccountPage: React.FC = () => {
   const [reason, setReason] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleDelete = async () => {
     if (!window.confirm("정말로 계정을 삭제하시겠습니까?\n삭제 후 복구가 불가능합니다.")) {
@@ -31,12 +29,14 @@ const DeleteAccountPage: React.FC = () => {
 
       // API 응답 구조에 맞게 확인: { "code": "GEN-000", "status": 200 }
       if (response.status === 200 && response.data?.code === 'GEN-000') {
-        alert('계정이 성공적으로 삭제되었습니다.');
-        // 토큰 제거
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        // 메인 페이지로 이동
-        navigate('/', { replace: true });
+        // 모든 인증 관련 데이터 완전히 제거
+        localStorage.clear();
+        
+        // 성공 메시지
+        alert('계정이 성공적으로 삭제되었습니다.\n재가입을 원하시면 다시 로그인해주세요.');
+        
+        // 메인 페이지로 이동 (카카오 로그인 페이지)
+        window.location.href = '/';
       } else {
         alert('탈퇴 처리에 실패했습니다. 다시 시도해주세요.');
       }
