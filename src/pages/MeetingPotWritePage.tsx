@@ -178,10 +178,31 @@ const MeetingPotWritePage: React.FC = () => {
 
       console.log('동행 게시글 등록 성공:', postResponse.data);
       
-      // 게시글 ID 추출
-      const createdPostId = postResponse.data?.data?.postId || postResponse.data?.postId;
-      if (!createdPostId) {
-        console.error('게시글 ID를 받지 못했습니다.');
+      // API가 postId를 반환하지 않으므로, 작성한 게시글을 찾기 위해 게시글 목록 조회
+      let createdPostId: number | null = null;
+      
+      try {
+        // 방금 작성한 게시글을 찾기 위해 게시글 목록 조회
+        const postsListResponse = await axiosInstance.get('/api/auth/user/posts');
+        console.log('게시글 목록 조회 응답:', postsListResponse.data);
+        
+        const postsList = postsListResponse.data?.data?.content || postsListResponse.data?.content || [];
+        
+        // 제목과 내용이 일치하는 가장 최근 게시글 찾기
+        const matchedPost = postsList.find((p: any) => 
+          p.title === title.trim() && 
+          p.content === content.trim() &&
+          p.eventId === selectedEvent.eventId
+        );
+        
+        if (matchedPost) {
+          createdPostId = matchedPost.postId;
+          console.log('생성된 게시글 ID 찾음:', createdPostId);
+        } else {
+          console.error('생성된 게시글을 찾을 수 없습니다. 목록:', postsList);
+        }
+      } catch (listError) {
+        console.error('게시글 목록 조회 실패:', listError);
       }
 
       // 2. 채팅방 생성 (visitDates의 첫 번째 날짜 사용)
@@ -198,26 +219,33 @@ const MeetingPotWritePage: React.FC = () => {
         chatRoomName = `${selectedEvent.title} 같이 갈 사람~`;
       }
 
-      try {
-        // category가 없거나 빈 문자열인 경우 기본값 설정
-        const category = selectedEvent.category || '기타';
-        
-        const chatResponse = await axiosInstance.post('/api/auth/user/companion-chatrooms', {
-          name: chatRoomName,
-          information: content.length > 100 ? content.substring(0, 100) + '...' : content,
-          category: category,
-          eventDate: eventDate,
-          createdFrom: 'POST',
-          createdFromId: createdPostId,
-        });
+      // createdPostId가 있을 때만 채팅방 생성
+      if (createdPostId) {
+        try {
+          // category가 없거나 빈 문자열인 경우 기본값 설정
+          const category = selectedEvent.category || '기타';
+          
+          const chatResponse = await axiosInstance.post('/api/auth/user/companion-chatrooms', {
+            name: chatRoomName,
+            information: content.length > 100 ? content.substring(0, 100) + '...' : content,
+            category: category,
+            eventDate: eventDate,
+            createdFrom: 'POST',
+            createdFromId: createdPostId,
+          });
 
-        console.log('채팅방 생성 성공:', chatResponse.data);
-        alert('동행 모집 게시글이 등록되었고, 단체 채팅방이 생성되었습니다!');
-      } catch (chatError: any) {
-        console.error('채팅방 생성 실패:', chatError);
-        // 채팅방 생성 실패해도 게시글은 등록되었으므로 경고만 표시
-        const chatErrorMessage = chatError.response?.data?.message || '채팅방 생성에 실패했습니다.';
-        alert(`게시글은 등록되었지만 채팅방 생성에 실패했습니다: ${chatErrorMessage}`);
+          console.log('채팅방 생성 성공:', chatResponse.data);
+          alert('동행 모집 게시글이 등록되었고, 단체 채팅방이 생성되었습니다!');
+        } catch (chatError: any) {
+          console.error('채팅방 생성 실패:', chatError);
+          console.error('채팅방 생성 실패 상세:', chatError.response?.data);
+          // 채팅방 생성 실패해도 게시글은 등록되었으므로 경고만 표시
+          const chatErrorMessage = chatError.response?.data?.message || '채팅방 생성에 실패했습니다.';
+          alert(`게시글은 등록되었지만 채팅방 생성에 실패했습니다: ${chatErrorMessage}`);
+        }
+      } else {
+        console.error('게시글 ID를 찾을 수 없어 채팅방을 생성하지 못했습니다.');
+        alert('게시글은 등록되었지만 채팅방 생성에 실패했습니다. (게시글 ID를 찾을 수 없음)');
       }
 
       navigate('/meetingpot');

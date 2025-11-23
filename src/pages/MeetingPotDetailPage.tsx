@@ -107,6 +107,12 @@ const MeetingPotDetailPage: React.FC = () => {
           const chatListRes = await axiosInstance.get('/api/auth/user/companion-chatrooms');
           const chatRooms = chatListRes.data?.data?.content || chatListRes.data?.data || [];
           console.log('전체 동행 채팅방 목록:', chatRooms);
+          console.log('현재 게시글 ID:', postId, '(타입:', typeof postId, ')');
+          
+          // 모든 채팅방의 createdFrom과 createdFromId 확인
+          chatRooms.forEach((room: any) => {
+            console.log(`채팅방 ID: ${room.chatRoomId}, createdFrom: ${room.createdFrom}, createdFromId: ${room.createdFromId} (타입: ${typeof room.createdFromId})`);
+          });
           
           // createdFrom이 'POST'이고 createdFromId가 현재 postId와 일치하는 채팅방 찾기
           const relatedChatRoom = chatRooms.find(
@@ -119,9 +125,10 @@ const MeetingPotDetailPage: React.FC = () => {
               name: relatedChatRoom.name,
               participation: relatedChatRoom.participation || 0,
             });
-            console.log('연결된 채팅방 찾음:', relatedChatRoom);
+            console.log('✅ 연결된 채팅방 찾음:', relatedChatRoom);
           } else {
-            console.log('연결된 채팅방을 찾을 수 없습니다.');
+            console.log('❌ 연결된 채팅방을 찾을 수 없습니다.');
+            console.log('찾으려는 조건: createdFrom="POST", createdFromId=' + Number(postId));
           }
         } catch (chatError) {
           console.error('채팅방 정보 가져오기 실패:', chatError);
