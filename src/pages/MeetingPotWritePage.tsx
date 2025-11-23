@@ -181,29 +181,63 @@ const MeetingPotWritePage: React.FC = () => {
       // API가 postId를 반환하지 않으므로, 작성한 게시글을 찾기 위해 게시글 목록 조회
       let createdPostId: number | null = null;
       
-      try {
-        // 방금 작성한 게시글을 찾기 위해 게시글 목록 조회
-        const postsListResponse = await axiosInstance.get('/api/auth/user/posts');
-        console.log('게시글 목록 조회 응답:', postsListResponse.data);
-        
-        const postsList = postsListResponse.data?.data?.content || postsListResponse.data?.content || [];
-        
-        // 제목과 내용이 일치하는 가장 최근 게시글 찾기
-        const matchedPost = postsList.find((p: any) => 
-          p.title === title.trim() && 
-          p.content === content.trim() &&
-          p.eventId === selectedEvent.eventId
-        );
-        
-        if (matchedPost) {
-          createdPostId = matchedPost.postId;
-          console.log('생성된 게시글 ID 찾음:', createdPostId);
-        } else {
-          console.error('생성된 게시글을 찾을 수 없습니다. 목록:', postsList);
+      // 게시글이 DB에 저장되는 시간을 고려하여 재시도 로직 추가
+      const findCreatedPost = async (retryCount = 0, maxRetries = 3): Promise<number | null> => {
+        try {
+          // 첫 시도가 아니면 잠시 대기 (500ms씩 증가)
+          if (retryCount > 0) {
+            await new Promise(resolve => setTimeout(resolve, 500 * retryCount));
+            console.log(`게시글 찾기 재시도 ${retryCount}/${maxRetries}...`);
+          }
+          
+          const postsListResponse = await axiosInstance.get('/api/auth/user/posts');
+          console.log('게시글 목록 조회 응답:', postsListResponse.data);
+          
+          const postsList = postsListResponse.data?.data?.content || postsListResponse.data?.content || [];
+          console.log('게시글 목록 개수:', postsList.length);
+          
+          // 제목과 내용이 일치하는 게시글 찾기
+          const matchedPost = postsList.find((p: any) => 
+            p.title === title.trim() && 
+            p.content === content.trim() &&
+            p.eventId === selectedEvent.eventId
+          );
+          
+          if (matchedPost) {
+            console.log('✅ 생성된 게시글 ID 찾음:', matchedPost.postId);
+            return matchedPost.postId;
+          }
+          
+          // 제목으로만 찾기 (내용이 잘리거나 수정될 수 있으므로)
+          const titleMatchedPost = postsList.find((p: any) => 
+            p.title === title.trim() && 
+            p.eventId === selectedEvent.eventId
+          );
+          
+          if (titleMatchedPost) {
+            console.log('✅ 생성된 게시글 ID 찾음 (제목 매칭):', titleMatchedPost.postId);
+            return titleMatchedPost.postId;
+          }
+          
+          // 재시도
+          if (retryCount < maxRetries) {
+            return await findCreatedPost(retryCount + 1, maxRetries);
+          }
+          
+          console.error('생성된 게시글을 찾을 수 없습니다.');
+          console.error('찾으려는 게시글 정보:', { title: title.trim(), eventId: selectedEvent.eventId });
+          console.error('현재 게시글 목록 (최근 3개):', postsList.slice(0, 3));
+          return null;
+        } catch (listError) {
+          console.error('게시글 목록 조회 실패:', listError);
+          if (retryCount < maxRetries) {
+            return await findCreatedPost(retryCount + 1, maxRetries);
+          }
+          return null;
         }
-      } catch (listError) {
-        console.error('게시글 목록 조회 실패:', listError);
-      }
+      };
+      
+      createdPostId = await findCreatedPost();
 
       // 2. 채팅방 생성 (visitDates의 첫 번째 날짜 사용)
       const eventDate = visitDates[0]; // 첫 번째 방문 예정일을 채팅방 날짜로 사용

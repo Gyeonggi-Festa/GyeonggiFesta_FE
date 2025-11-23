@@ -98,41 +98,95 @@ const MeetingPotDetailPage: React.FC = () => {
         setLoading(true);
         const res = await axiosInstance.get(`/api/auth/user/posts/${postId}`);
         console.log('게시글 상세 응답:', res.data);
+        console.log('게시글 상세 데이터 전체:', JSON.stringify(res.data, null, 2));
         
         const postData = res.data?.data || res.data;
         setPost(postData);
         
-        // 게시글과 연결된 채팅방 찾기 (모든 동행 채팅방 목록에서 검색)
-        try {
-          const chatListRes = await axiosInstance.get('/api/auth/user/companion-chatrooms');
-          const chatRooms = chatListRes.data?.data?.content || chatListRes.data?.data || [];
-          console.log('전체 동행 채팅방 목록:', chatRooms);
-          console.log('현재 게시글 ID:', postId, '(타입:', typeof postId, ')');
-          
-          // 모든 채팅방의 createdFrom과 createdFromId 확인
-          chatRooms.forEach((room: any) => {
-            console.log(`채팅방 ID: ${room.chatRoomId}, createdFrom: ${room.createdFrom}, createdFromId: ${room.createdFromId} (타입: ${typeof room.createdFromId})`);
+        // 게시글 데이터에 채팅방 정보가 포함되어 있는지 확인
+        if (postData.chatRoomId) {
+          console.log('✅ 게시글에 채팅방 정보 포함됨:', postData.chatRoomId);
+          setChatRoom({
+            chatRoomId: postData.chatRoomId,
+            name: postData.chatRoomName || postData.title,
+            participation: postData.participation || 0,
           });
-          
-          // createdFrom이 'POST'이고 createdFromId가 현재 postId와 일치하는 채팅방 찾기
-          const relatedChatRoom = chatRooms.find(
-            (room: any) => room.createdFrom === 'POST' && room.createdFromId === Number(postId)
-          );
-          
-          if (relatedChatRoom) {
-            setChatRoom({
-              chatRoomId: relatedChatRoom.chatRoomId,
-              name: relatedChatRoom.name,
-              participation: relatedChatRoom.participation || 0,
+        }
+        
+        // 게시글과 연결된 채팅방 찾기 (모든 동행 채팅방 목록에서 검색)
+        // 게시글 데이터에 채팅방 정보가 없을 경우에만 실행
+        if (!chatRoom) {
+          try {
+            const chatListRes = await axiosInstance.get('/api/auth/user/companion-chatrooms');
+            const chatRooms = chatListRes.data?.data?.content || chatListRes.data?.data || [];
+            console.log('🔍 전체 동행 채팅방 목록:', chatRooms);
+            console.log('🔍 채팅방 목록 개수:', chatRooms.length);
+            console.log('🔍 현재 게시글 ID:', postId, '(타입:', typeof postId, ')');
+            console.log('🔍 현재 게시글 제목:', postData.title);
+            console.log('🔍 첫 번째 채팅방 전체 구조:', JSON.stringify(chatRooms[0], null, 2));
+            
+            // 모든 채팅방의 정보 확인
+            console.log('🔍 모든 채팅방 상세 정보:');
+            chatRooms.forEach((room: any, index: number) => {
+              console.log(`  [${index}] ID: ${room.chatRoomId}, 이름: "${room.name}"`);
+              console.log(`       createdFrom: ${room.createdFrom}, createdFromId: ${room.createdFromId}`);
+              console.log(`       제목 일치: ${room.name === postData.title}`);
             });
-            console.log('✅ 연결된 채팅방 찾음:', relatedChatRoom);
-          } else {
-            console.log('❌ 연결된 채팅방을 찾을 수 없습니다.');
-            console.log('찾으려는 조건: createdFrom="POST", createdFromId=' + Number(postId));
+            
+            let relatedChatRoom = null;
+            
+            // 방법 1: createdFrom='POST'이고 createdFromId가 일치하는 채팅방 찾기
+            relatedChatRoom = chatRooms.find(
+              (room: any) => room.createdFrom === 'POST' && room.createdFromId === Number(postId)
+            );
+            
+            if (relatedChatRoom) {
+              console.log('✅ [방법1] createdFromId로 채팅방 찾음:', relatedChatRoom);
+            } else {
+              console.log('⚠️ [방법1] createdFromId로 채팅방을 찾지 못함');
+              
+              // 방법 2: 제목이 포함된 채팅방 찾기 (가장 최근 것)
+              const titleBasedRooms = chatRooms.filter((room: any) => 
+                room.name && postData.title && room.name.includes(postData.title.substring(0, 10))
+              );
+              
+              if (titleBasedRooms.length > 0) {
+                // 가장 최근 채팅방 선택 (chatRoomId가 큰 것)
+                relatedChatRoom = titleBasedRooms.reduce((latest: any, current: any) => 
+                  current.chatRoomId > latest.chatRoomId ? current : latest
+                );
+                console.log('✅ [방법2] 제목으로 채팅방 찾음:', relatedChatRoom);
+              } else {
+                console.log('⚠️ [방법2] 제목으로 채팅방을 찾지 못함');
+                
+                // 방법 3: createdFrom='POST'인 가장 최근 채팅방 찾기
+                const postBasedRooms = chatRooms.filter((room: any) => room.createdFrom === 'POST');
+                if (postBasedRooms.length > 0) {
+                  relatedChatRoom = postBasedRooms.reduce((latest: any, current: any) => 
+                    current.chatRoomId > latest.chatRoomId ? current : latest
+                  );
+                  console.log('✅ [방법3] POST 타입의 최근 채팅방 찾음 (임시):', relatedChatRoom);
+                } else {
+                  console.log('❌ 모든 방법으로 채팅방을 찾지 못했습니다.');
+                }
+              }
+            }
+            
+            if (relatedChatRoom) {
+              setChatRoom({
+                chatRoomId: relatedChatRoom.chatRoomId,
+                name: relatedChatRoom.name,
+                participation: relatedChatRoom.participation || 0,
+              });
+              console.log('✅ 최종 선택된 채팅방:', relatedChatRoom);
+            } else {
+              console.log('❌ 연결된 채팅방을 찾을 수 없습니다.');
+              console.log('찾으려는 조건: createdFrom="POST", createdFromId=' + Number(postId));
+            }
+          } catch (chatError) {
+            console.error('채팅방 정보 가져오기 실패:', chatError);
+            // 채팅방 정보가 없어도 게시글은 표시
           }
-        } catch (chatError) {
-          console.error('채팅방 정보 가져오기 실패:', chatError);
-          // 채팅방 정보가 없어도 게시글은 표시
         }
       } catch (error) {
         console.error('게시글 상세 불러오기 실패:', error);
