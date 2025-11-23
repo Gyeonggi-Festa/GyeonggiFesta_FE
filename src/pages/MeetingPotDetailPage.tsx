@@ -297,7 +297,9 @@ const MeetingPotDetailPage: React.FC = () => {
               }
             }}
           >
-            채팅
+            <img src="/assets/chat.svg" alt="채팅" />
+            <span>채팅방 입장</span>
+            <span className={styles.participantCount}>({chatRoom.participation}명 참여 중)</span>
           </button>
         </div>
       )}
