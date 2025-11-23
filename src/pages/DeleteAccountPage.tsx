@@ -24,10 +24,8 @@ const DeleteAccountPage: React.FC = () => {
       console.log('🔑 토큰 존재 여부:', !!token);
       console.log('📝 탈퇴 사유:', reason || '없음');
 
-      // DELETE 메소드로 요청
-      const response = await axiosInstance.delete('/api/auth/user/withdraw', {
-        data: reason ? { reason } : undefined,
-      });
+      // DELETE 메소드로 요청 (body 없이)
+      const response = await axiosInstance.delete('/api/auth/user/withdraw');
 
       console.log('✅ 탈퇴 응답 성공:', response);
 
