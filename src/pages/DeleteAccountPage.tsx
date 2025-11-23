@@ -20,12 +20,12 @@ const DeleteAccountPage: React.FC = () => {
       // 디버깅: 요청 정보 출력
       const token = localStorage.getItem('access_token');
       console.log('🔍 탈퇴 요청 시작');
-      console.log('📍 엔드포인트:', 'https://api.gyeonggifesta.site/auth/user/withdraw');
+      console.log('📍 엔드포인트:', 'https://api.gyeonggifesta.site/api/auth/user/withdraw');
       console.log('🔑 토큰 존재 여부:', !!token);
       console.log('📝 탈퇴 사유:', reason || '없음');
 
       // DELETE 메소드로 요청 (body 없이)
-      const response = await axiosInstance.delete('/auth/user/withdraw');
+      const response = await axiosInstance.delete('/api/auth/user/withdraw');
 
       console.log('✅ 탈퇴 응답 성공:', response);
 
