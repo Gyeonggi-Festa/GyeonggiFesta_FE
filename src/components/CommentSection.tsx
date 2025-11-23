@@ -128,7 +128,7 @@ export default function CommentSection({ eventId }: CommentSectionProps) {
               </div>
               <div className={styles.metaRight}>
                 <span className={styles.time}>· {formatDate(comment.createdAt)}</span>
-                {comment.username && <span className={styles.writer}>· {comment.username}</span>}
+                <span className={styles.writer}>· {comment.username && comment.username.trim() !== '' ? comment.username : '알 수 없음'}</span>
                 
                 {comment.memberId !== myMemberId && comment.verifyId && (
                   <button
@@ -162,6 +162,10 @@ export default function CommentSection({ eventId }: CommentSectionProps) {
                 {comment.replies.map((reply) => (
                   <div key={reply.commentId} className={styles.replyItem}>
                     <div className={styles.replyText}>{reply.content}</div>
+                    <div className={styles.replyMeta}>
+                      <span className={styles.time}>{formatDate(reply.createdAt)}</span>
+                      <span className={styles.writer}>· {reply.username && reply.username.trim() !== '' ? reply.username : '알 수 없음'}</span>
+                    </div>
                   </div>
                 ))}
               </div>

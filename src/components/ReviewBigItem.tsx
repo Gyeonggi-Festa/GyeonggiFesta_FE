@@ -9,11 +9,14 @@ interface ReviewItemProps {
 }
 
 export default function ReviewBigItem({ name,  visitDate, content, profileImg, rating = 0 }: ReviewItemProps) {
+  // 탈퇴한 회원의 경우 "알 수 없음"으로 표시
+  const displayName = name && name.trim() !== '' ? name : '알 수 없음';
+  
   return (
     <div className={styles.item}>
         <div className={styles.headerRow}>
             <div className={styles.leftInfo}>
-              <span className={styles.name}>{name}</span>
+              <span className={styles.name}>{displayName}</span>
               <span className={styles.meta}>{visitDate} 방문</span>
             </div>
             {rating > 0 && (

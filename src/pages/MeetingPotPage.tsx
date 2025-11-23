@@ -205,7 +205,7 @@ const MeetingPotPage: React.FC = () => {
 
               <div className={styles.cardFooter}>
                 <div className={styles.meta}>
-                  <span className={styles.writer}>작성자: {post.writer}</span>
+                  <span className={styles.writer}>작성자: {post.writer && post.writer.trim() !== '' ? post.writer : '알 수 없음'}</span>
                   <span className={styles.updatedAt}>{formatDate(post.updatedAt)}</span>
                 </div>
                 <div className={styles.stats}>

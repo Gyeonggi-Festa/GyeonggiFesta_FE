@@ -218,7 +218,7 @@ const MeetingPotDetailPage: React.FC = () => {
 
         {/* 작성자 정보 */}
         <div className={styles.authorRow}>
-          <span className={styles.writer}>작성자: {post.writer}</span>
+          <span className={styles.writer}>작성자: {post.writer && post.writer.trim() !== '' ? post.writer : '알 수 없음'}</span>
           <span className={styles.updatedAt}>{formatDateTime(post.updatedAt)}</span>
         </div>
 

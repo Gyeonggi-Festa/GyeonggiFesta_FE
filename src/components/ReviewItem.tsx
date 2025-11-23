@@ -17,6 +17,9 @@ export default function ReviewItem({ reviewId, name, visitDate, content, mediaLi
   const hasImage = mediaList.length > 0;
   const imageUrl = hasImage ? mediaList[0].imageUrl : null;
   
+  // 탈퇴한 회원의 경우 "알 수 없음"으로 표시
+  const displayName = name && name.trim() !== '' ? name : '알 수 없음';
+  
   const myVerifyId = localStorage.getItem("verify_id"); // ✅ 내 ID 가져오기
   const isAuthor = myVerifyId === reviewAuthorVerifyId; // ✅ 비교
 
@@ -39,7 +42,7 @@ export default function ReviewItem({ reviewId, name, visitDate, content, mediaLi
     <div className={styles.item}>
       <div className={styles.topInfo}>
         <div className={styles.leftInfo}>
-          <span className={styles.name}>{name}</span>
+          <span className={styles.name}>{displayName}</span>
           <span className={styles.meta}>{visitDate}</span>
           {rating > 0 && (
             <div className={styles.rating}>

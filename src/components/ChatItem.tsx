@@ -12,11 +12,14 @@ interface ChatItemProps {
   
   
   const ChatItem: React.FC<ChatItemProps> = ({ name, participation, message, time, hasNotification }) => {
+    // 탈퇴한 회원의 경우 "알 수 없음"으로 표시
+    const displayName = name && name.trim() !== '' ? name : '알 수 없음';
+    
     return (
       <div className={styles["chat-item"]}>
         <div className={styles["chat-info"]}>
           <div className={styles["chat-top"]}>
-            <div className={styles["chat-name"]}>{name}</div>
+            <div className={styles["chat-name"]}>{displayName}</div>
             <div className={styles["chat-age-gender"]}>{participation}</div>
           </div>
           <div className={styles["chat-bottom"]}>
