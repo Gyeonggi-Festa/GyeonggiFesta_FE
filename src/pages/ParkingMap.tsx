@@ -19,19 +19,25 @@ interface ParkingDetail {
   parkingId: string;
   parkingName: string;
   address: string;
+  parkingType: string;
+  operationType: string;
   tel: string;
   totalSpace: number;
   currentParked: number;
+  lastUpdated: string;
   weekdayOperatingHours: string;
   weekendOperatingHours: string;
   holidayOperatingHours: string;
+  saturdayFeeStatus: string;
+  holidayFeeStatus: string;
   baseRate: number;
   baseTime: number;
   additionalRate: number;
   additionalTime: number;
   dailyMaxRate: number;
-  paid: boolean;
+  availableSpace: number;
   nightPaid: boolean;
+  paid: boolean;
 }
 
 interface Coords {

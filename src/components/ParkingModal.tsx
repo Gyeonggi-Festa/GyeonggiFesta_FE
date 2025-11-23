@@ -3,21 +3,28 @@ import React, { useState } from 'react'; // ✅ useState 추가
 import styles from './css/ParkingModal.module.css';
 
 interface ParkingDetail {
+  parkingId: string;
   parkingName: string;
   address: string;
+  parkingType: string;
+  operationType: string;
   tel: string;
   totalSpace: number;
   currentParked: number;
+  lastUpdated: string;
   weekdayOperatingHours: string;
   weekendOperatingHours: string;
   holidayOperatingHours: string;
+  saturdayFeeStatus: string;
+  holidayFeeStatus: string;
   baseRate: number;
   baseTime: number;
   additionalRate: number;
   additionalTime: number;
   dailyMaxRate: number;
-  paid: boolean;
+  availableSpace: number;
   nightPaid: boolean;
+  paid: boolean;
 }
 
 interface ParkingModalProps {
@@ -45,7 +52,7 @@ const ParkingModal: React.FC<ParkingModalProps> = ({ data, onClose ,onRefresh}) 
     onRefresh();
     setTimeout(() => setIsRotating(false), 1000); // ✅ 애니메이션 끝나면 해제
   };
-  const available = data.totalSpace - data.currentParked;
+  const available = data.availableSpace;
   const status = getStatus(available);
   const weekday = splitTime(data.weekdayOperatingHours);
   const weekend = splitTime(data.weekendOperatingHours);
